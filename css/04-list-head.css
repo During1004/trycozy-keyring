@@ -1,0 +1,32 @@
+/* ────────────────────────────────────────────────────────────
+   04-list-head.css
+   시리즈 칩 줄 · 목록 머리(제목 · 개수 · 정렬 · 촘촘히)
+   ──────────────────────────────────────────────────────────── */
+
+/* 시리즈 필터 */
+/* 시리즈 필터 — 좁으면 가로 스크롤, 넓으면 줄바꿈 */
+.chipwrap{position:relative}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:16px 16px 2px;-webkit-overflow-scrolling:touch;
+       scrollbar-width:thin;scroll-behavior:smooth}
+.chips::-webkit-scrollbar{height:5px}
+.chips::-webkit-scrollbar-thumb{background:var(--cap-lo);border-radius:3px}
+.chips::-webkit-scrollbar-track{background:transparent}
+/* 오른쪽에 더 있다는 표시 */
+.chipwrap::after{content:"";position:absolute;right:0;top:16px;bottom:2px;width:52px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(216,219,222,0),var(--mat) 58%);opacity:0;transition:opacity .18s;z-index:1}
+.chipwrap.more::after{opacity:1}
+.chipmore{position:absolute;right:8px;top:50%;transform:translateY(-2px);z-index:2;pointer-events:none;
+  width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--ink);color:#fff;
+  font-size:12px;line-height:1;opacity:0;transition:opacity .18s}
+.chipwrap.more .chipmore{opacity:.88}
+.chips button{flex:none;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted);background:var(--cap);border:1px solid var(--line);border-radius:20px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.list-head{display:flex;align-items:baseline;justify-content:space-between;padding:16px 16px 10px}
+.list-head h2{font-size:16px;font-weight:700;margin:0}
+.lh-right{display:flex;align-items:center;gap:9px}
+.dens{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--muted);background:var(--cap);
+      border:1px solid var(--line);border-radius:4px;padding:5px 9px;cursor:pointer;white-space:nowrap}
+.dens[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+

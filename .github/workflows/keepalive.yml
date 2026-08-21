@@ -1,0 +1,35 @@
+# ══════════════════════════════════════════════════════════════
+#  Supabase 무료 플랜은 1주일 동안 아무 요청이 없으면 프로젝트를 재웁니다.
+#  이 작업이 사흘에 한 번 가볍게 두드려 깨어 있게 합니다.
+#
+#  쓰려면 : 저장소 → Settings → Secrets and variables → Actions 에
+#           SUPABASE_URL      (예: https://xxxx.supabase.co)
+#           SUPABASE_ANON_KEY (anon public key)
+#           두 개를 넣으세요. 안 넣으면 이 작업은 그냥 건너뜁니다.
+#  ⚠ service_role key 는 넣지 마세요.
+# ══════════════════════════════════════════════════════════════
+name: keepalive
+
+on:
+  schedule:
+    - cron: "17 3 */3 * *"   # 사흘에 한 번, UTC 03:17 (한국 정오쯤)
+  workflow_dispatch:          # Actions 탭에서 손으로도 돌릴 수 있습니다
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase 두드리기
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "SUPABASE_URL / SUPABASE_ANON_KEY 가 없어 건너뜁니다."
+            exit 0
+          fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            "$URL/rest/v1/?select=1")
+          echo "응답 $code"
+          case "$code" in 200|401|404) echo "살아 있음";; *) echo "이상함 — Supabase 대시보드를 확인하세요"; exit 1;; esac

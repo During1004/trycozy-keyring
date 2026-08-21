@@ -1,0 +1,63 @@
+/* ────────────────────────────────────────────────────────────
+   08-sheet.css
+   보내기 전 확인 시트 · 송장 붙여넣기 · 보낸 뒤 안내줄
+   ──────────────────────────────────────────────────────────── */
+/* ── 보내기 전 확인 시트 · 보낸 뒤 안내줄 ──────────────────
+   폰에서 손이 스치면 그대로 나가고 담은 게 다 날아가던 걸 막습니다.
+   브라우저 confirm() 은 폰에서 작고 못생겨서 쓰지 않습니다. */
+.sheet{position:fixed;inset:0;z-index:70;background:rgba(22,24,28,.55);display:flex;
+       align-items:flex-end;justify-content:center;padding:0}
+@media (min-width:560px){.sheet{align-items:center;padding:24px}}
+.sheetcard{width:100%;max-width:420px;background:#fff;border-radius:12px 12px 0 0;padding:20px 18px 18px}
+@media (min-width:560px){.sheetcard{border-radius:10px}}
+.sheetcard .big{display:block;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.sheetcard .sum{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+.sheetcard .sum b{color:var(--ink);font-size:16px}
+.sheetcard .to{margin:10px 0 0;padding:9px 10px;background:var(--cap);border-radius:5px;
+               font-size:12.5px;line-height:1.55;border-left:3px solid var(--cyan)}
+.sheetcard .ask{margin:14px 0 0;font-size:14px;font-weight:700}
+.sheetcard .rejwrap{display:block;margin:14px 0 0}
+.sheetcard .rejwrap span{display:block;font-family:var(--mono);font-size:9px;font-weight:700;
+                         letter-spacing:.1em;color:var(--muted);margin-bottom:5px}
+.sheetcard .rejwrap input,
+.sheetcard .rejwrap select{width:100%;font-family:var(--sans);font-size:14px;padding:10px 11px;
+                          border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+.sheetcard .rejwrap select{height:41px;appearance:none;font-weight:700;
+   background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+   background-position:calc(100% - 16px) 18px,calc(100% - 11px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.sheetcard .rejwrap input:focus,
+.sheetcard .rejwrap select:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,68,127,.2)}
+/* 택배사는 좁게, 송장번호는 넓게 */
+.trkrow{display:flex;gap:8px;align-items:flex-end}
+.trkrow .rejwrap{margin-top:14px}
+.trkrow .rejwrap.co{flex:0 0 38%}
+.trkrow .rejwrap.no{flex:1;min-width:0}
+/* 송장 — 캡처를 붙여넣거나 파일로 고르거나. 둘 다 비워도 출고 완료는 됩니다 */
+.pastebox{margin:12px 0 0;padding:14px 12px;border:1.5px dashed var(--line);border-radius:6px;
+          background:var(--cap);text-align:center;cursor:pointer}
+.pastebox:focus{outline:0;border-color:var(--cyan);background:#F0FAFB}
+.pastebox p{margin:0;font-size:12px;line-height:1.6;color:var(--muted)}
+.pastebox .pick{color:var(--cyan);font-weight:700;text-decoration:underline;cursor:pointer}
+.pastebox img{max-width:100%;max-height:190px;margin-top:10px;border-radius:4px;display:block;
+              margin-left:auto;margin-right:auto;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.order .trk{margin-top:10px;padding:9px 10px;background:#fff;border-radius:4px;
+            border-left:3px solid var(--ink);font-size:12.5px}
+.order .trk .eyebrow{display:block;font-family:var(--mono);font-size:9px;font-weight:700;
+                     letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+.order .trk i{font-style:normal;color:var(--muted)}
+.order .trk img{max-width:100%;max-height:220px;margin-top:8px;border-radius:4px;display:block;
+                box-shadow:0 2px 8px rgba(0,0,0,.16)}
+.sheetcard .btns{margin-top:4px}
+.act.ac{background:var(--accent);box-shadow:0 3px 0 var(--accent-lo)}
+.act.cy{background:var(--cyan);box-shadow:0 3px 0 var(--cyan-lo)}
+
+.sentbar{margin:12px 16px 0;padding:12px 14px;background:#fff;border-radius:6px;
+         border-left:4px solid var(--mat);box-shadow:0 3px 0 var(--cap-lo)}
+.sentbar.mA{border-left-color:var(--accent)}
+.sentbar.mB{border-left-color:var(--cyan)}
+.sentbar .ttl{margin:0;font-size:13px;font-weight:600}
+.sentbar .ttl b{font-family:var(--mono)}
+.sentbar .btns{margin-top:10px}
+@media (max-width:559px){.sentbar .btns{flex-wrap:wrap}.sentbar .btns .act{flex:1 1 46%}}
+@media (min-width:1024px){.sentbar{margin:0 0 14px}}
+

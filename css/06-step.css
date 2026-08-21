@@ -1,0 +1,18 @@
+/* ────────────────────────────────────────────────────────────
+   06-step.css
+   수량 단위 설정 상자 (매대 보충 전용)
+   ──────────────────────────────────────────────────────────── */
+/* 수량 단위 설정 (매대 보충 전용) */
+.stepbox{margin:14px 16px 0;padding:12px 14px;background:var(--cap);border-radius:6px;box-shadow:0 3px 0 var(--cap-lo)}
+.stepbox[hidden]{display:none}
+.stepbox .eyebrow{display:block;margin-bottom:8px}
+.steprow{display:flex;gap:6px;align-items:stretch}
+.steprow button{flex:1;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:5px;padding:9px 0;cursor:pointer}
+.steprow button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.steprow input{width:64px;flex:none;font-family:var(--mono);font-size:14px;font-weight:700;text-align:center;
+  border:1px solid var(--line);border-radius:5px;background:#fff;outline:0;padding:9px 4px;-moz-appearance:textfield}
+.steprow input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,107,224,.2)}
+.stephint{font-size:11px;color:var(--muted);margin:8px 2px 0}
+.stepsync{font-size:10.5px;color:var(--cap-lo2);margin:5px 2px 0}
+

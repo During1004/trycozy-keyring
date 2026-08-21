@@ -1,0 +1,151 @@
+/* ────────────────────────────────────────────────────────────
+   11-inbox.css
+   접수함 카드 · 상태 배지 · 주문서 확인 배지 · 더다움 ①② 버튼
+   ──────────────────────────────────────────────────────────── */
+.inbox{padding:18px 16px 0;max-width:560px;margin:0 auto}
+.empty{padding:44px 16px;text-align:center;color:var(--muted);font-size:14px}
+.order{background:var(--cap);border-radius:6px;padding:14px;margin-bottom:12px;box-shadow:0 3px 0 var(--cap-lo);
+       border-left:4px solid var(--mat)}
+/* ── 주문 유형 색 = 전자랜드 화면의 모드 색을 그대로 따라간다 ──
+   매대 보충 = --accent 분홍 (#mDisplay 눌린 색) · 개인 배송 = --cyan 청록 (#mShip 눌린 색)
+   ⚠ 앞 화면 모드 색을 바꾸면 여기도 같이 바꿀 것. 두 곳이 어긋나면 색의 뜻이 없어진다. */
+.order.mA{border-left-color:var(--accent)}
+.order.mB{border-left-color:var(--cyan)}
+.mchip{display:inline-block;margin-right:7px;padding:3px 8px;border-radius:3px;
+       font-size:10.5px;font-weight:700;letter-spacing:-.01em;color:#fff;vertical-align:1px}
+.mA .mchip{background:var(--accent)}
+.mB .mchip{background:var(--cyan)}
+.mB .xltab td.cqty{background:#CDE9EC}
+.mA .ship-to{border-left-color:var(--accent)}
+.order-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.badge{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:0;padding:6px 12px;border-radius:14px;
+  line-height:1.25;background:var(--mat);color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center}
+.badge.wait{background:var(--accent);color:#fff}
+.badge.ok{background:var(--cyan);color:#fff}
+.badge.appr{background:#0E6E75;color:#fff}
+.badge.done{background:var(--ink);color:#fff}
+/* 주문서(엑셀)를 더다움이 받았는지 — 세 화면이 같이 봅니다 */
+.badges{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.badge.dl.yes{background:var(--cyan);color:#fff}
+.badge.dl.no{background:#FFF4E0;color:#7A4E00;box-shadow:inset 0 0 0 1.5px #E8A33D}
+.order h3{margin:0;font-size:14px;font-weight:700}
+.order .meta{font-size:12px;color:var(--muted);margin:2px 0 0}
+.order .ship-to{font-size:12px;margin:8px 0 0;padding:9px 10px;background:#fff;border-radius:4px;border-left:3px solid var(--cyan)}
+.act{width:100%;margin-top:12px;border:0;border-radius:5px;padding:12px;background:var(--ink);color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 0 #000}
+.act:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.btns{display:flex;gap:8px;margin-top:12px}
+.btns .act{margin-top:0}
+.act.store{background:var(--accent);box-shadow:0 3px 0 var(--accent-lo)}
+.act.cust{background:var(--cyan);box-shadow:0 3px 0 var(--cyan-lo)}
+.act.sm{font-size:12.5px;padding:11px 8px;line-height:1.35}
+.act.sm em{display:block;font-style:normal;font-weight:500;font-size:10px;opacity:.82;margin-top:2px}
+.act.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:0 2px 0 var(--line);font-weight:700}
+.act.ghost em{color:var(--muted)}
+.act.ghost:hover{border-color:var(--ink)}
+/* 더다움 — ① 엑셀 받기 → ② 넘기기. 받기 전에는 ②가 잠긴다 */
+.mA .act.form{background:var(--accent);box-shadow:0 3px 0 var(--accent-lo)}
+.mB .act.form{background:var(--cyan);box-shadow:0 3px 0 var(--cyan-lo)}
+.act[disabled]{background:var(--mat);color:var(--muted);box-shadow:0 3px 0 var(--line);cursor:not-allowed}
+.act[disabled] em{opacity:1;color:var(--muted)}
+.act.ghost:active{transform:none;box-shadow:none}
+.flow{display:flex;margin:10px 0 0;padding:9px 10px;background:#fff;border-radius:4px}
+.flow i{flex:1;font-style:normal;font-size:10px;text-align:center;color:var(--cap-lo);font-family:var(--mono);letter-spacing:.03em;position:relative;padding-top:14px}
+.flow i::before{content:"";position:absolute;top:3px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--line)}
+.flow i::after{content:"";position:absolute;top:6px;left:50%;width:100%;height:1px;background:var(--line)}
+.flow i:last-child::after{display:none}
+.flow i.done{color:var(--ink);font-weight:700}
+.flow i.done::before{background:var(--cyan)}
+.flow i.now{color:var(--accent);font-weight:700}
+.flow i.now::before{background:var(--accent);box-shadow:0 0 0 3px rgba(232,68,127,.25)}
+.ops{background:var(--cap);border-radius:6px;padding:14px;margin-bottom:14px;box-shadow:0 3px 0 var(--cap-lo)}
+.ops .eyebrow{display:block;margin-bottom:9px}
+.ops .row{display:flex;gap:8px;margin-bottom:9px}
+.ops label{flex:1;display:block}
+.ops label span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.ops input{width:100%;font-family:var(--sans);font-size:13px;padding:9px;border:1px solid var(--line);border-radius:3px;background:#fff;outline:0}
+.ops .tpl{font-size:11px;color:var(--muted);margin:2px 0 0;line-height:1.6}
+.ops .tpl b{color:var(--xl)}
+.steps{font-size:11.5px;color:var(--muted);line-height:1.7;margin:10px 0 0;padding:10px;background:#fff;border-radius:4px}
+.steps b{color:var(--ink)}
+.sect{font-size:11px;color:var(--muted);margin:16px 2px 8px;font-weight:600}
+.order .ship-to.top{margin:0 0 10px}
+.order .ship-to .eyebrow{display:block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.warn{margin:0 0 12px;padding:10px 12px;background:#FFF4E0;border-left:3px solid #E8A33D;border-radius:4px;font-size:11.5px;color:#6B4A00;line-height:1.6}
+
+
+
+/* ── 여러 건 한 번에 (24-bulk.js) ─────────────────────────── */
+.bulkbox{background:var(--cap);border-radius:6px;padding:12px;margin-bottom:14px;box-shadow:0 3px 0 var(--cap-lo)}
+.bulkhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bulkhead span{font-size:12.5px;color:var(--muted)}
+.bulkhead .lnk{margin-left:auto;background:none;border:0;padding:0;font-family:var(--sans);font-size:11.5px;color:var(--accent);text-decoration:underline;cursor:pointer}
+.bulkbtns{display:flex;gap:8px}
+.bulkbtns .act{flex:1}
+.selbox{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.selbox input{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;margin:0}
+.selbox.all{padding:5px 11px 5px 7px;border-radius:6px;background:#fff;border:1px solid var(--line)}
+.selbox.all b{font-size:13.5px;font-weight:800;color:var(--ink)}
+.order .badges .selbox{margin-left:4px;padding:4px;border-radius:6px;background:#fff;border:1px solid var(--line)}
+.order .badges .selbox:hover{border-color:var(--accent)}
+.picklist{list-style:none;margin:10px 0 0;padding:0;max-height:190px;overflow:auto;background:#fff;border-radius:4px}
+.picklist li{display:flex;gap:8px;align-items:baseline;font-size:11.5px;padding:7px 10px;border-bottom:1px solid var(--line)}
+.picklist li:last-child{border-bottom:0}
+.picklist li b{font-family:var(--mono);font-size:10.5px;color:var(--xl)}
+.picklist li i{font-style:normal;color:var(--muted)}
+.picklist li span{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums}
+.picklist li.more{color:var(--muted);justify-content:center}
+.imptab{max-height:230px;overflow:auto;background:#fff;border-radius:4px;margin-top:10px}
+.imptab table{width:100%;table-layout:fixed;min-width:0}
+.imptab th,.imptab td{white-space:normal;overflow:hidden;text-overflow:ellipsis}
+.imptab th:last-child,.imptab td:last-child{width:42%;text-align:right}
+.imptab td{vertical-align:middle}
+.imptab td.bar{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--xl);white-space:nowrap}
+.imptab i.how{font-style:normal;display:inline-block;margin-left:6px;padding:1px 5px;border-radius:3px;background:var(--cap);color:var(--muted);font-size:9.5px}
+.imptab b.ono{display:block;font-family:var(--mono);font-size:10px;font-weight:400;color:var(--muted);margin-top:2px}
+.sum b.miss{color:#B4451F}
+label.chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;cursor:pointer}
+label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
+.offscreen{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.ways{font-size:11.5px;color:var(--muted);line-height:1.8;margin:8px 2px 14px;padding:9px 11px;background:#fff;border:1px solid var(--line);border-radius:5px}
+.ways b{color:var(--ink)}
+
+/* ── 매대 / 고객 갈래 탭 (24-bulk.js) ─────────────────────── */
+.kindtab{display:flex;gap:6px;margin:0 0 12px}
+.kindtab button{flex:1;font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--muted);
+  background:var(--cap);border:1px solid var(--line);border-radius:5px;padding:9px 6px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;line-height:1}
+.kindtab button b{font-size:11px;font-weight:700;padding:2px 6px;border-radius:9px;background:#fff;color:var(--muted)}
+.kindtab button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.kindtab button[aria-pressed="true"] b{background:rgba(255,255,255,.22);color:#fff}
+
+/* ── 남은 일 / 다 끝남 (24-bulk.js stateBanner) ───────────── */
+.stateban{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;border-radius:6px;margin:0 0 12px;border-left:5px solid}
+.stateban b{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.stateban span{font-size:12px}
+.stateban.has{background:#FFF0F5;border-left-color:var(--accent);color:#8A1F45}
+.stateban.has b{color:var(--accent)}
+.stateban.done{background:#E8F6ED;border-left-color:#3E9C63;color:#2C6E47}
+.stateban.done b{color:#2E7D4F}
+/* 탭 배지 — 남은 게 있으면 분홍, 없으면 초록 */
+.kindtab button.has b{background:#FFE3EE;color:#B4245C}
+.kindtab button.clear b{background:#E8F6ED;color:#2E7D4F}
+.kindtab button[aria-pressed="true"].has b{background:rgba(255,255,255,.24);color:#fff}
+.kindtab button[aria-pressed="true"].clear b{background:rgba(160,255,200,.28);color:#CFF6DF}
+/* 출고 완료된 카드는 연한 초록 */
+.order.shipped{background:#F1FAF4;box-shadow:0 3px 0 #DCEFE3;border-left-color:#3E9C63}
+
+/* ── 눈에 띄어야 하는 두 버튼 ──────────────────────────────
+   회색(ghost)으로 두었더니 "빈 화면인 줄 알았다" 는 말을 들었습니다.
+   ① 송장 엑셀 올리기 = 파일을 넣는 자리라는 게 보이게 (점선 + 화살표)
+   ② 출고 완료로 표시 = 출고 = 초록. 배너 색과 같은 말을 씁니다. */
+.act.up{background:#fff;border:2px dashed var(--accent);box-shadow:none;color:var(--accent);
+  font-weight:800;padding:15px 10px}
+.act.up::before{content:"⬆";display:inline-block;margin-right:7px;font-size:15px;transform:translateY(1px)}
+.act.up em{color:#A8567A;opacity:1;font-weight:600}
+.act.up:hover{background:#FFF0F5;border-style:solid}
+.act.up:active{transform:translateY(1px);box-shadow:none}
+
+.act.shipout{background:#2E7D4F;color:#fff;box-shadow:0 3px 0 #1F5A38;font-weight:800}
+.act.shipout::before{content:"✓";display:inline-block;margin-right:7px;font-weight:900}
+.act.shipout:hover{background:#358C59}

@@ -1,0 +1,48 @@
+/* ────────────────────────────────────────────────────────────
+   07-find.css
+   찾기 줄 · 상품군 구분 머리(스크롤해도 붙어 있는 머리)
+   ──────────────────────────────────────────────────────────── */
+/* 상품군 구분 머리 */
+/* 찾기 줄 — 시리즈가 늘어나도 자리를 더 먹지 않는다 */
+.findbar{padding:12px 16px 0}
+.findfield{position:relative;margin-bottom:8px}
+.findfield input{width:100%;font-family:var(--sans);font-size:13.5px;padding:10px 32px 10px 12px;
+  border:1px solid var(--line);border-radius:5px;background:#fff;outline:0;-webkit-appearance:none}
+.findfield input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,107,224,.18)}
+.findfield input::-webkit-search-cancel-button{display:none}
+.findfield button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;
+  border:0;border-radius:50%;background:var(--mat);color:var(--muted);font-size:15px;line-height:1;cursor:pointer}
+.findrow{display:flex;gap:6px;align-items:stretch}
+.findrow .chip{flex:none;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted);
+  background:var(--cap);border:1px solid var(--line);border-radius:20px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.findrow .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.findrow .chip.pick{background:#fff;border-color:var(--accent);color:var(--accent-lo)}
+.findrow .chip.pick[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+body.shipmode .findrow .chip.pick{border-color:var(--cyan);color:var(--cyan-lo)}
+body.shipmode .findrow .chip.pick[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:#fff}
+#serSel{flex:1;min-width:0;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 10px;cursor:pointer;outline:0}
+#serSel:focus{border-color:var(--blue)}
+#serSel.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.findbtn{flex:none;width:36px;font-size:17px;line-height:1;color:var(--muted);background:var(--cap);
+  border:1px solid var(--line);border-radius:20px;cursor:pointer;font-family:var(--sans)}
+.findbtn[aria-expanded="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+/* 폰에서는 검색칸을 접어 세로 공간을 아낀다 (⌕ 한 번이면 열림) */
+@media (max-width:1023px){
+  .findfield{display:none}
+  body.findopen .findfield{display:block}
+}
+@media (min-width:1024px){ .findbtn{display:none} }
+
+/* 스크롤해도 지금 보고 있는 상품군이 계속 보이게 */
+.grp{position:sticky;top:var(--stick,104px);z-index:5;background:var(--mat);
+     padding-top:8px;margin-top:14px}
+
+.grp{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:18px 2px 2px;
+     padding-bottom:6px;border-bottom:1px solid var(--line)}
+.grp{position:sticky;top:var(--stick,104px);z-index:5;background:var(--mat);padding-top:8px}
+.grp:first-child{margin-top:2px}
+.grp b{font-size:13.5px;font-weight:700}
+.grp span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.grp[hidden]{display:none!important}
+

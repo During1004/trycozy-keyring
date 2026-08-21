@@ -1,0 +1,62 @@
+/* ────────────────────────────────────────────────────────────
+   09-card.css
+   상품 카드 · 촘촘 모드 · 수량 버튼(빨강 − / 파랑 +)
+   ⚠ 사진을 눌러 수량이 오르면 안 됩니다. 수량은 − / + / 직접 입력 세 가지뿐입니다.
+   ──────────────────────────────────────────────────────────── */
+/* 정렬 */
+.sortsel{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--muted);background:var(--cap);
+  border:1px solid var(--line);border-radius:4px;padding:5px 7px;cursor:pointer;outline:0}
+
+
+/* 촘촘 모드 — 사진 칸을 낮춰 한 화면에 더 많이 */
+body.compact .cap-face{aspect-ratio:3/2}
+body.compact .cap-name{min-height:0;font-size:12px}
+body.compact .cap-sub{display:none}
+body.compact .cap-body{padding:7px 8px 8px}
+body.compact .step{margin-top:6px}
+@media (max-width:1023px){ body.compact .scan-note{display:none} body.compact .pagenote{padding:7px 10px;font-size:11px} }
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px}
+.cap{position:relative;background:var(--cap);border-radius:7px;text-align:left;box-shadow:0 5px 0 var(--cap-lo),0 6px 10px rgba(0,0,0,.13)}
+.cap::before{content:"";position:absolute;inset:5px 5px auto;height:1px;background:var(--cap-hi);border-radius:7px;z-index:3}
+.cap.on{box-shadow:0 5px 0 var(--accent-lo),0 6px 10px rgba(232,68,127,.3)}
+body.shipmode .cap.on{box-shadow:0 5px 0 var(--cyan-lo),0 6px 10px rgba(18,147,159,.3)}
+.cap.hit{animation:hit .45s}
+@keyframes hit{0%,100%{transform:none}30%{transform:translateY(4px)}}
+.cap-face{position:relative;aspect-ratio:1;overflow:hidden;border-radius:7px 7px 0 0;background:#fff}
+.cap-face img{width:100%;height:100%;object-fit:contain;display:block}
+.legend{position:absolute;top:6px;right:6px;z-index:2;min-width:26px;height:26px;display:none;place-items:center;padding:0 6px;background:var(--accent);color:#fff;border-radius:4px;font-family:var(--mono);font-size:13px;font-weight:700}
+body.shipmode .legend{background:var(--cyan)}
+.cap.on .legend{display:grid}
+.nodb{position:absolute;left:6px;top:6px;z-index:2;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.06em;background:#E8A33D;color:#3A2600;border-radius:3px;padding:3px 5px}
+.cap-body{padding:9px 10px 10px}
+.cap-name{font-size:13.5px;font-weight:700;line-height:1.25;min-height:34px;word-break:keep-all}
+.cap-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.3}
+.cap-meta{display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-top:4px}
+.cap-code{font-family:var(--mono);font-size:9.5px;color:var(--cap-lo2);letter-spacing:.03em}
+.cap-price{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap}
+
+/* ── 수량: 빨강 − / 파랑 + / 직접 입력 ── */
+.step{display:flex;align-items:stretch;gap:6px;margin-top:9px}
+.step button{width:38px;flex:none;border:0;border-radius:5px;font-family:var(--mono);font-size:20px;font-weight:700;color:#fff;cursor:pointer;line-height:1;transition:transform .08s,box-shadow .08s}
+.step .minus{background:var(--red);box-shadow:0 3px 0 var(--red-lo)}
+.step .plus{background:var(--blue);box-shadow:0 3px 0 var(--blue-lo)}
+.step button:active{transform:translateY(2px)}
+.step .minus:active{box-shadow:0 1px 0 var(--red-lo)}
+.step .plus:active{box-shadow:0 1px 0 var(--blue-lo)}
+.step button:disabled{background:var(--cap-lo);box-shadow:0 3px 0 var(--cap-lo2);cursor:default;transform:none}
+.step input{flex:1;min-width:0;width:100%;text-align:center;font-family:var(--mono);font-size:17px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:5px;padding:7px 2px;outline:0;-moz-appearance:textfield}
+.step input::-webkit-outer-spin-button,.step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.step input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,107,224,.22)}
+.step input.z{color:var(--cap-lo2)}
+
+.recv{padding:26px 16px 4px}
+.recv .eyebrow{display:block;margin-bottom:9px}
+.hint{font-size:12px;color:var(--muted);margin:9px 2px 0}
+.hint.ok{color:var(--cyan);font-weight:600}
+.ship{margin:0;padding:14px;background:var(--cap);border-radius:5px;box-shadow:0 3px 0 var(--cap-lo)}
+.ship label{display:block;margin-bottom:10px}
+.ship label:last-child{margin-bottom:0}
+.ship span{display:block;margin-bottom:5px;font-size:13px}
+.ship input{width:100%;font-family:var(--sans);font-size:14px;padding:10px;border:1px solid var(--line);border-radius:3px;background:#fff;outline:0}
+.ship input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(18,147,159,.25)}
+

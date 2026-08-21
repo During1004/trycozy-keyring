@@ -1,0 +1,42 @@
+/* ────────────────────────────────────────────────────────────
+   10-address.css
+   우편번호 · 주소 찾기 창
+   ⚠ .zipbody 는 높이를 반드시 확정할 것(min-height 만 주면 iframe 이 찌그러집니다).
+      ⚠ 자식에 position:absolute;inset:0 을 걸면 클릭이 삼켜집니다. 겪은 사고입니다.
+   ──────────────────────────────────────────────────────────── */
+/* ── 우편번호 · 주소 찾기 ── */
+.zip-row{display:flex;gap:6px}
+.zip-row input{flex:1;min-width:0}
+.zip-row button{flex:none;font-family:var(--sans);font-size:13px;font-weight:700;color:#fff;background:var(--cyan);
+                border:0;border-radius:3px;padding:0 14px;cursor:pointer;box-shadow:0 2px 0 var(--cyan-lo);white-space:nowrap}
+.zip-row button:active{transform:translateY(1px);box-shadow:0 1px 0 var(--cyan-lo)}
+.ship input[readonly]{background:#F7F8F9;color:var(--ink);cursor:pointer}
+.ship input[readonly]:focus{box-shadow:none;border-color:var(--line)}
+.ship.manual input[readonly]{background:#fff;cursor:text}
+.zipmodal{position:fixed;inset:0;z-index:60;background:rgba(22,24,28,.55);display:flex;
+          align-items:center;justify-content:center;padding:16px}
+/* ★ 높이를 반드시 확정할 것.
+   카카오 위젯은 height:100% 인 iframe 을 넣는데, 부모 높이가 auto 면
+   100% 가 0 으로 풀려 "빈 창"이 된다. (실제로 겪음)
+   → .zipcard 에 명시 높이, iframe 은 absolute inset:0 으로 강제 채움. */
+.zipcard{width:100%;max-width:460px;height:min(86vh,560px);background:#fff;border-radius:8px;overflow:hidden;
+         box-shadow:0 20px 50px rgba(0,0,0,.35);display:flex;flex-direction:column}
+.ziphead{flex:none;display:flex;align-items:center;justify-content:space-between;
+         padding:12px 14px;border-bottom:1px solid var(--line)}
+.ziphead b{font-size:14px}
+.ziphead button{border:0;background:transparent;font-size:22px;line-height:1;color:var(--muted);cursor:pointer;padding:0 4px}
+.zipbody{flex:1;min-height:0;position:relative;overflow:hidden}
+/* ★ 절대배치 금지. 위젯이 덧붙이는 부가 div 까지 전체를 덮어
+   검색 결과 클릭을 삼켜버린다(타이핑은 되는데 클릭만 안 되는 증상). 실제로 겪음.
+   .zipcard 에 높이가 확정돼 있으므로 height:100% 만으로 충분하다. */
+.zipbody>div{height:100%!important;width:100%!important}
+.zipbody iframe{width:100%!important;height:100%!important;border:0!important;display:block}
+.zipbody>.ziperr{height:auto!important}
+.ziperr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:12px;padding:24px 20px;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.75;background:#fff}
+.ziperr b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ziperr code{font-family:var(--mono);font-size:11px;background:var(--cap);padding:2px 5px;border-radius:3px;color:var(--ink)}
+.ziperr button{font-family:var(--sans);font-size:13px;font-weight:700;color:#fff;background:var(--cyan);
+               border:0;border-radius:5px;padding:11px 18px;cursor:pointer;box-shadow:0 3px 0 var(--cyan-lo)}
+
+

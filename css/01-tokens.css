@@ -1,0 +1,24 @@
+/* ────────────────────────────────────────────────────────────
+   01-tokens.css
+   색·글꼴·바탕 — 모든 색은 여기 :root 한 곳에서만 정합니다
+   ⚠ --accent(매대 분홍) 과 --cyan(개인 청록) 은 주문 화면과 접수함이 같이 씁니다.
+      한쪽만 고치면 색이 어긋납니다.
+   ──────────────────────────────────────────────────────────── */
+:root{
+  color-scheme:light only; -webkit-text-size-adjust:100%;
+  --mat:#D8DBDE; --cap:#F3F4F5; --cap-hi:#FFF; --cap-lo:#A7AEB6; --cap-lo2:#868E97;
+  --ink:#16181C; --muted:#6E7681; --line:#C4CAD0;
+  --accent:#E8447F; --accent-lo:#B32A5D;
+  --cyan:#12939F; --cyan-lo:#0B6B74;
+  --red:#D92D3F; --red-lo:#9E1C2B;
+  --blue:#1D6BE0; --blue-lo:#134A9E;
+  --xl:#1D6F42; --xl-lo:#14512F;
+  --mono:"Chivo Mono",ui-monospace,Menlo,monospace;
+  --sans:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--mat);padding-bottom:104px;line-height:1.45}
+.wrap{width:100%;max-width:520px;margin:0 auto;background:var(--mat);min-height:100vh}
+.eyebrow{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+

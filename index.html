@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ── 검색엔진 차단 ────────────────────────────────────────
+     구글·네이버 등이 이 페이지를 검색결과에 올리지 못하게 막습니다.
+     주소를 직접 아는 사람만 들어올 수 있습니다.
+     ⚠ 지우지 마세요. 지우면 며칠 안에 검색에 뜹니다.
+     ──────────────────────────────────────────────────────── -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<title>네모 키캡 키링 주문 · 트라이코지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+
+<!-- ── 화면 꾸미기 ────────────────────────────────────────────
+     ⚠ 순서가 곧 우선순위입니다. 12-responsive.css 는 반드시 맨 마지막.
+     ⚠ 파일을 새로 넣으면 여기에도 한 줄 추가해야 적용됩니다.
+     ──────────────────────────────────────────────────────── -->
+<link rel="stylesheet" href="css/01-tokens.css">
+<link rel="stylesheet" href="css/02-header.css">
+<link rel="stylesheet" href="css/03-mode.css">
+<link rel="stylesheet" href="css/04-list-head.css">
+<link rel="stylesheet" href="css/05-inbox-table.css">
+<link rel="stylesheet" href="css/06-step.css">
+<link rel="stylesheet" href="css/07-find.css">
+<link rel="stylesheet" href="css/08-sheet.css">
+<link rel="stylesheet" href="css/09-card.css">
+<link rel="stylesheet" href="css/10-address.css">
+<link rel="stylesheet" href="css/11-inbox.css">
+<link rel="stylesheet" href="css/12-responsive.css">
+
+<!-- 주소 찾기 (카카오 우편번호). 못 받으면 직접 입력으로 자동 전환됩니다 -->
+<!-- ★ 브라우저의 "사이트에서 나가시겠습니까? 변경사항이 저장되지 않을 수 있습니다" 를 안 뜨게 합니다.
+     · 이 앱은 담은 수량을 알아서 보관하므로 그 물음이 의미가 없습니다.
+     · 그 창은 브라우저 기본 창이라 모양을 못 바꿉니다 — 안 뜨게 하는 수밖에 없습니다.
+     · 아래 카카오 우편번호 스크립트 등 **남의 코드보다 먼저** 있어야 막힙니다. 순서를 바꾸지 마세요. -->
+<!-- ★ 첫 화면 가림막 — 화면이 준비되기 전 "속이 빈 화면" 이 잠깐 보이던 것을 막습니다.
+     · 로그인 전에 주문 화면이 한순간이라도 비치면 안 됩니다.
+     · 여기 style 을 인라인으로 둔 이유: css 파일을 받기 전에도 이미 덮고 있어야 합니다.
+     · 걷어내는 건 22-auth.js(로그인 판정 끝) 또는 23-store.js(저장소 꺼짐)가 합니다.
+       혹시 둘 다 못 부르는 일이 생겨도 8초 뒤에는 스스로 걷힙니다. -->
+<style>
+  /* 첫 화면 가림막 — 통통 튀는 스마일 키캡 (우리 상품 모양 그대로)
+     ⚠ css 파일을 받기 전에도 돌아야 해서 여기 인라인으로 둡니다. 그림·스크립트 안 씁니다. */
+  #boot{position:fixed;inset:0;z-index:900;background:#161A1E;display:flex;align-items:center;
+    justify-content:center;font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,"Malgun Gothic",sans-serif}
+  #boot .bw{position:relative;width:170px;text-align:center}
+  #boot .bcap{width:76px;height:76px;margin:0 auto;border-radius:19px;position:relative;
+    background:linear-gradient(160deg,#FF7BA9,#E8447F 55%,#B32A5D);
+    box-shadow:inset 0 -5px 0 rgba(0,0,0,.16),inset 0 3px 0 rgba(255,255,255,.32),0 8px 18px rgba(232,68,127,.34);
+    animation:bcap 1.5s cubic-bezier(.5,.05,.4,1) infinite}
+  #boot .bcap::after{content:"";position:absolute;top:-13px;left:50%;width:17px;height:17px;margin-left:-8.5px;
+    border:3.5px solid #C9CDD2;border-radius:50%;border-bottom-color:transparent}
+  #boot i{position:absolute;display:block}
+  #boot .e1,#boot .e2{top:29px;width:8px;height:8px;border-radius:50%;background:#fff;animation:bblink 3.4s infinite}
+  #boot .e1{left:19px} #boot .e2{right:19px}
+  #boot .bm{bottom:19px;left:50%;width:28px;height:14px;margin-left:-14px;
+    border:3px solid #fff;border-top:0;border-radius:0 0 28px 28px}
+  #boot .bsh{position:absolute;top:86px;left:50%;width:56px;height:9px;margin-left:-28px;border-radius:50%;
+    background:rgba(0,0,0,.45);filter:blur(3px);animation:bsh 1.5s cubic-bezier(.5,.05,.4,1) infinite}
+  #boot .bmsg{margin-top:36px;font-size:12.5px;color:#8A9099}
+  @keyframes bcap{0%,100%{transform:translateY(0) scale(1,1)}
+    18%{transform:translateY(-2px) scale(.96,1.05)}
+    50%{transform:translateY(-30px) scale(1.02,.98) rotate(-4deg)}
+    88%{transform:translateY(0) scale(1.09,.9)}}
+  @keyframes bsh{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.6);opacity:.2}}
+  @keyframes bblink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+  /* 움직임을 불편해하는 분(윈도우 "애니메이션 표시" 끔)에게는 멈춰 둡니다 */
+  @media (prefers-reduced-motion:reduce){
+    #boot .bcap,#boot .bsh,#boot .e1,#boot .e2{animation:none}
+  }
+</style>
+<div id="boot">
+  <div class="bw">
+    <div class="bcap"><i class="e1"></i><i class="e2"></i><i class="bm"></i></div>
+    <div class="bsh"></div>
+    <div class="bmsg">불러오는 중…</div>
+  </div>
+</div>
+<script>
+window.__ready = function () {
+  var b = document.getElementById("boot");
+  if (b) { b.style.transition = "opacity .18s"; b.style.opacity = "0";
+           setTimeout(function () { b.remove(); }, 200); }
+};
+setTimeout(window.__ready, 8000);          /* 마지막 안전장치 */
+(function () {
+  var add = window.addEventListener;
+  window.addEventListener = function (type) {
+    if (String(type).toLowerCase() === "beforeunload") return;      // 등록 자체를 무시
+    return add.apply(this, arguments);
+  };
+  try {
+    Object.defineProperty(window, "onbeforeunload",
+      { get: function(){ return null; }, set: function(){}, configurable: true });
+  } catch (e) {}
+})();
+</script>
+<script src="https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" onerror="window.__zipFail=1"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="top-row">
+      <div class="brand">TRYCOZY <em>/</em> 키캡 키링 주문</div>
+    </div>
+    <nav class="chain" role="group" aria-label="역할">
+      <button type="button" data-role="0" aria-pressed="true"><b>전자랜드</b><small>주문</small></button>
+      <button type="button" data-role="1" aria-pressed="false"><b>더다움</b><small>중간관리</small></button>
+      <button type="button" data-role="2" aria-pressed="false"><b>트라이코지</b><small>최종관리</small></button>
+    </nav>
+    <nav class="subtabs" id="subtabs" role="group" aria-label="전자랜드 화면">
+      <button type="button" data-sub="order" aria-pressed="true">주문하기</button>
+      <button type="button" data-sub="mine" aria-pressed="false" id="subMine">내 주문<b>0</b></button>
+    </nav>
+  </header>
+
+  <div id="v0">
+   <div class="sentbar" id="sentBar" hidden></div>
+   <div class="col-side" id="side">
+    <section class="scan">
+      <div class="scan-field">
+        <span class="eyebrow">스캔</span>
+        <input id="scan" inputmode="numeric" autocomplete="off" placeholder="바코드를 찍으세요" aria-label="바코드 스캔">
+      </div>
+      <p class="scan-note" id="scanNote">바코드를 찍으면 그 상품의 수량 칸으로 커서가 들어갑니다.</p>
+    </section>
+
+    <section class="mode">
+      <div class="eyebrow">주문 페이지</div>
+      <div class="mode-tabs" role="group" aria-label="주문 페이지">
+        <button type="button" id="mDisplay" aria-pressed="true">매대 보충<small>DISPLAY</small></button>
+        <button type="button" id="mShip" aria-pressed="false">개인 배송<small>SHIPPING</small></button>
+      </div>
+    </section>
+    <button type="button" class="cfgbar" id="cfgBar" aria-expanded="false">
+      <b id="cfgSummary">단위 10 · 찍으면 수량 입력</b><span>설정 ⌄</span>
+    </button>
+    <div id="cfgWrap">
+    <div class="scanmode" role="group" aria-label="스캔 방식">
+      <span>찍으면</span>
+      <button type="button" data-sm="qty">수량 입력</button>
+      <button type="button" data-sm="one">단위만큼 +</button>
+    </div>
+    <p class="pagenote" id="pageNote"></p>
+    <div class="stepbox" id="stepBox">
+      <span class="eyebrow">수량 단위</span>
+      <div class="steprow" role="group" aria-label="수량 단위">
+        <button type="button" data-step="1">1</button>
+        <button type="button" data-step="5">5</button>
+        <button type="button" data-step="10" aria-pressed="true">10</button>
+        <button type="button" data-step="20">20</button>
+        <input id="stepCustom" inputmode="numeric" placeholder="직접" aria-label="단위 직접 입력">
+      </div>
+      <p class="stephint" id="stepHint">＋ / － 버튼과 스캔이 10개씩 움직입니다.</p>
+      <p class="stepsync" id="stepSync">아직 저장된 설정이 없습니다.</p>
+    </div>
+    </div>
+    <div class="cartbox" id="cartBox"></div>
+   </div>
+
+   <div class="col-main">
+    <div class="findbar">
+      <div class="findfield">
+        <input id="find" type="search" autocomplete="off" placeholder="디자인 · 시리즈 · 바코드 찾기" aria-label="상품 찾기">
+        <button type="button" id="findClear" hidden aria-label="지우기">×</button>
+      </div>
+      <div class="findrow">
+        <button type="button" class="chip" data-g="" aria-pressed="true">전체 <b data-alln>84</b></button>
+        <button type="button" class="chip pick" data-g="__picked" aria-pressed="false">담은 것 <b data-pickn>0</b></button>
+        <select id="serSel" aria-label="시리즈 선택"></select>
+        <button type="button" class="findbtn" id="findBtn" aria-label="이름·바코드로 찾기" aria-expanded="false">⌕</button>
+      </div>
+    </div>
+    <div class="list-head">
+      <h2 id="listTitle">매대 보충</h2>
+      <div class="lh-right">
+        <span class="eyebrow" id="count"></span>
+        <select class="sortsel" id="sortSel" aria-label="정렬">
+          <option value="db">DB 순서</option>
+          <option value="name">이름순</option>
+          <option value="code">바코드순</option>
+        </select>
+        <button type="button" class="dens" id="dens" aria-pressed="false" title="사진 크기 전환">촘촘히</button>
+      </div>
+    </div>
+    <div class="grid" id="gridA"></div>
+    <div class="grid" id="gridB" hidden></div>
+   </div>
+
+    <section class="recv" id="shipForm" hidden>
+      <div class="eyebrow">받는 분</div>
+      <div class="ship">
+        <label><span>이름</span><input id="sName" autocomplete="name"></label>
+        <label><span>연락처</span><input id="sTel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></label>
+        <label class="zipline"><span>우편번호</span>
+          <div class="zip-row">
+            <input id="sZip" inputmode="numeric" placeholder="00000" readonly autocomplete="postal-code">
+            <button type="button" id="zipBtn">주소 찾기</button>
+          </div>
+        </label>
+        <label><span>주소</span><input id="sAddr" placeholder="주소 찾기로 입력됩니다" readonly autocomplete="street-address"></label>
+        <label><span>상세주소</span><input id="sAddr2" placeholder="동 · 호수 등" autocomplete="address-line2"></label>
+        <label><span>요청사항</span><input id="sMemo" placeholder="선택"></label>
+      </div>
+      <p class="hint" id="shipHint">이름, 연락처, 주소를 채우면 주문을 보낼 수 있습니다.</p>
+
+      <div class="zipmodal" id="zipModal" hidden>
+        <div class="zipcard">
+          <div class="ziphead"><b>주소 찾기</b><button type="button" id="zipClose" aria-label="닫기">×</button></div>
+          <div class="zipbody" id="zipBody"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="v0b" class="inbox" hidden></div>
+
+  <div id="v1" class="inbox" hidden></div>
+
+  <div id="v2" class="inbox" hidden></div>
+
+</div>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheetcard">
+      <div id="sheetBody"></div>
+      <div class="btns">
+        <button class="act ghost sm" id="sheetNo" type="button">취소</button>
+        <button class="act sm" id="sheetYes" type="button">보내기</button>
+      </div>
+    </div>
+  </div>
+
+<div class="bar" id="bar">
+  <div class="bar-inner">
+    <div class="tally">
+      <span class="who" id="tallyWho">매대 보충</span>
+      <strong id="tally">0 품목 · 0 개</strong>
+      <em id="tallySum" hidden></em>
+    </div>
+    <button class="send" id="send" disabled>주문 보내기</button>
+  </div>
+</div>
+
+<!-- 엑셀(zip) 만들기 — 일반 스크립트로 먼저 읽어 window.JSZip 을 만듭니다 -->
+<script src="lib/jszip.min.js"></script>
+
+<!-- ① 상품 목록을 먼저 읽고  ② 화면 코드를 부릅니다 (순서가 중요합니다)
+     · build.py 로 단일 HTML 을 만들면 이 자리가 데이터 통째로 바뀝니다
+     · ⚠ ES 모듈이라 파일을 더블클릭(file://)하면 안 열립니다.
+       반드시 90_도구\주문화면_열기.bat 으로 여세요. -->
+<script type="module">
+  try {
+    window.CATALOG = await fetch("data/catalog.json", { cache: "no-cache" }).then(r => {
+      if (!r.ok) throw new Error("catalog.json " + r.status);
+      return r.json();
+    });
+  } catch (e) {
+    window.__ready && window.__ready();
+    document.body.insertAdjacentHTML("afterbegin",
+      '<div style="padding:16px;font:14px/1.7 system-ui;color:#D62828">' +
+      '상품 목록(data/catalog.json)을 읽지 못했습니다.<br>' +
+      'HTML 을 더블클릭해서 열면 이 화면이 뜹니다 — <b>주문화면_열기.bat</b> 으로 여세요.<br>' +
+      '<small>' + String(e) + '</small></div>');
+    throw e;
+  }
+  /* ★ 화면 코드가 하나라도 어긋나면 ES 모듈은 **통째로** 안 돕니다.
+       그러면 이 파일의 뼈대만 남아 "상품이 안 보이고 전체 84" 같은 이상한 화면이 됩니다.
+       그때 무슨 일인지 모르고 헤매지 않게, 여기서 잡아 화면에 그대로 적습니다. */
+  try {
+    await import("./js/main.js");
+  } catch (e) {
+    console.error("[화면 코드]", e);
+    window.__ready && window.__ready();
+    document.body.insertAdjacentHTML("afterbegin",
+      '<div style="padding:18px 20px;margin:0 0 12px;font:14px/1.8 system-ui;background:#FFF0F5;' +
+      'border-left:5px solid #E8447F;color:#8A1F45">' +
+      '<b style="font-size:16px;color:#E8447F">화면을 불러오지 못했습니다</b><br>' +
+      '브라우저가 <b>옛 파일을 기억하고</b> 있을 때 주로 생깁니다.<br>' +
+      '① <b>Ctrl+Shift+R</b> 로 새로고침해 보세요.<br>' +
+      '② 그래도 같으면 검은 창을 닫고 <b>주문화면_열기.bat</b> 을 다시 실행하세요.<br>' +
+      '<small style="color:#6E7681">' + String(e && e.message || e) + '</small></div>');
+    throw e;
+  }
+</script>
+</body>
+</html>

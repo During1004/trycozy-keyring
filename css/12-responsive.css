@@ -1,0 +1,153 @@
+/* ────────────────────────────────────────────────────────────
+   12-responsive.css
+   폰 · 태블릿 · PC 화면폭별 배치
+   ⚠ 이 파일은 반드시 맨 마지막에 읽혀야 합니다. 앞 규칙을 덮어쓰는 자리입니다.
+      특히 PC 의 .bar{position:static} 은 파일 맨 끝에 있어야 합니다.
+   ──────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   반응형 — 폰은 촘촘하게, PC 는 넓게
+   ══════════════════════════════════════════════════════════════ */
+#v0{display:flex;flex-direction:column}
+.col-side{order:1}
+.col-main{order:2}
+#shipForm{order:3}
+.cartbox{display:none}
+
+/* ── 폰: 카드 축소 (한 화면에 더 많이) ── */
+@media (max-width:559px){
+  .wrap{max-width:100%}
+  .top{padding:10px 12px 9px}
+  .chain b{font-size:12px}
+  .scan{padding:9px 12px 0}
+  .scan-field input{font-size:14px;padding:10px 0}
+  .scan-note{font-size:10.5px;margin-top:5px;line-height:1.4}
+  .mode{padding:9px 12px 0}
+  .mode .eyebrow{display:none}
+  .mode-tabs{margin-top:0;gap:6px}
+  .mode-tabs button{font-size:12.5px;padding:8px 0}
+  .mode-tabs button small{font-size:8px;margin-top:1px}
+  .pagenote{margin:10px 12px 0;padding:8px 10px;font-size:11px}
+  .stepbox{margin:10px 12px 0;padding:10px 12px}
+  .stepbox .eyebrow{margin-bottom:6px}
+  .steprow button{padding:8px 0;font-size:13px}
+  .steprow input{width:56px;padding:8px 2px;font-size:13px}
+  .stephint{font-size:10.5px;margin-top:6px}
+  .stepsync{font-size:10px}
+  .findbar{padding:10px 12px 0}
+  .findfield input{font-size:13px;padding:9px 30px 9px 10px}
+  .findrow .chip{font-size:11.5px;padding:6px 10px}
+  #serSel{font-size:11.5px;padding:6px 8px}
+  .list-head{padding:10px 12px 8px}
+  .chips{padding:12px 12px 2px;gap:5px}
+  .chips button{font-size:11px;padding:6px 10px}
+  .list-head{padding:12px 12px 8px}
+  .list-head h2{font-size:14px}
+  .grid{gap:8px;padding:0 12px}
+  .cap{border-radius:6px;box-shadow:0 4px 0 var(--cap-lo),0 5px 8px rgba(0,0,0,.12)}
+  .cap.on{box-shadow:0 4px 0 var(--accent-lo),0 5px 8px rgba(232,68,127,.28)}
+  body.shipmode .cap.on{box-shadow:0 4px 0 var(--cyan-lo),0 5px 8px rgba(18,147,159,.28)}
+  .cap-body{padding:7px 8px 8px}
+  .cap-name{font-size:12px;min-height:29px;line-height:1.22}
+  .cap-sub{font-size:9.5px;margin-top:2px}
+  .cap-code{font-size:8.5px}
+  .cap-meta{margin-top:3px}
+  .cap-price{font-size:10px}
+  .legend{min-width:22px;height:22px;font-size:11.5px;top:5px;right:5px;border-radius:3px}
+  .nodb{font-size:7.5px;padding:2px 4px;left:5px;top:5px}
+  .step{gap:4px;margin-top:7px}
+  .step button{width:31px;font-size:17px;box-shadow:0 2px 0 var(--red-lo)}
+  .step .plus{box-shadow:0 2px 0 var(--blue-lo)}
+  .step input{font-size:15px;padding:5px 2px}
+  .recv{padding:20px 12px 4px}
+  .inbox{padding:14px 12px 0}
+  .bar{padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+  .tally strong{font-size:15px}
+  .send{padding:12px 16px;font-size:14px}
+  body{padding-bottom:92px}
+}
+@media (max-width:379px){
+  .cap-name{font-size:11.5px;min-height:27px}
+  .step button{width:28px;font-size:16px}
+  .step input{font-size:14px}
+}
+
+/* 넓으면 칩을 줄바꿈해 전부 보이게 — 마우스로 가로 스크롤하기 불편하므로 */
+
+
+/* ── 태블릿: 열 늘리기 ── */
+@media (min-width:560px){ .wrap{max-width:720px} .grid{grid-template-columns:repeat(3,1fr)} }
+@media (min-width:820px){ .wrap{max-width:960px} .grid{grid-template-columns:repeat(4,1fr)} }
+
+/* ── PC: 좌 상품 / 우 고정 조작부 ── */
+@media (min-width:1024px){
+  body{padding-bottom:24px}
+  .wrap{max-width:1440px;padding:0 8px}
+  #v0{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0 26px;align-items:start;
+      grid-template-areas:"main side";}
+  .col-main{grid-area:main;min-width:0}
+  .col-side{grid-area:side;position:sticky;top:104px;max-height:calc(100vh - 120px);
+            overflow-y:auto;padding-bottom:16px;scrollbar-width:thin}
+  .col-side .scan,.col-side .mode{padding-left:0;padding-right:0}
+  .col-side .scan{padding-top:18px}
+  .pagenote{margin-left:0;margin-right:0}
+  .stepbox{margin-left:0;margin-right:0}
+  .findbar{padding-left:0;padding-right:0}
+  .list-head{padding-left:0;padding-right:0}
+  .grid{padding:0;grid-template-columns:repeat(auto-fill,minmax(186px,1fr))}
+  .recv{padding:0;margin-top:14px}
+
+  /* 담은 목록 패널 */
+  .cartbox{display:block;margin-top:16px;background:var(--cap);border-radius:6px;
+           box-shadow:0 3px 0 var(--cap-lo);overflow:hidden}
+  .cartbox h4{margin:0;padding:11px 12px 9px;font-size:12px;font-weight:700;
+              border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+  .cartbox h4 span{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em}
+  .cartlist{max-height:38vh;overflow-y:auto}
+  .cartrow{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #E6E8EA}
+  .cartrow:last-child{border-bottom:0}
+  .cartrow img{width:32px;height:32px;object-fit:contain;background:#fff;border-radius:3px;flex:none}
+  .cartrow b{flex:1;min-width:0;font-size:11.5px;font-weight:600;line-height:1.3;
+             overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cartrow b i{display:block;font-style:normal;font-size:9.5px;color:var(--muted);font-weight:500}
+  .cartrow u{text-decoration:none;font-family:var(--mono);font-size:13px;font-weight:700;min-width:26px;text-align:right}
+  .cartrow b i.price{color:var(--ink);font-weight:700}
+  .cartsum{display:flex;justify-content:space-between;padding:9px 12px;border-top:1px solid var(--line);
+           font-size:11.5px;color:var(--muted);background:#fff}
+  .cartsum b{font-family:var(--mono);font-size:13px;color:var(--ink)}
+  .cartrow button{flex:none;width:22px;height:22px;border:0;border-radius:3px;background:var(--mat);
+                  color:var(--muted);font-size:14px;line-height:1;cursor:pointer}
+  .cartrow button:hover{background:var(--red);color:#fff}
+  .cartempty{padding:22px 12px;text-align:center;font-size:11.5px;color:var(--muted)}
+}
+@media (min-width:1620px){ .wrap{max-width:1760px} }
+@media (min-width:1024px){ body.compact .grid{grid-template-columns:repeat(auto-fill,minmax(158px,1fr))} }
+
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--mat);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.bar-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.tally{flex:1;min-width:0}
+.tally strong{display:block;font-family:var(--mono);font-size:17px;font-weight:700}
+.tally em{display:block;font-style:normal;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);margin-top:1px}
+.tally em[hidden]{display:none}
+.tally .who{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+body.shipmode .tally .who{color:var(--cyan)}
+.send{border:0;border-radius:5px;padding:14px 20px;background:var(--accent);color:#fff;font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 4px 0 var(--accent-lo)}
+.send:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-lo)}
+.send:disabled{background:var(--cap-lo);box-shadow:0 4px 0 var(--cap-lo2);cursor:default;transform:none}
+body.shipmode .send{background:var(--cyan);box-shadow:0 4px 0 var(--cyan-lo)}
+body.shipmode .send:disabled{background:var(--cap-lo);box-shadow:0 4px 0 var(--cap-lo2)}
+body.shipmode .brand em{color:var(--cyan)}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.n{font-family:var(--mono);font-weight:700;text-align:right;white-space:nowrap}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* PC — 뒤에 선언해 앞의 기본 규칙을 확실히 덮는다 */
+@media (min-width:1024px){
+  .inbox{max-width:1120px;margin:0 auto;padding:18px 0 0}
+  .bar{position:static;left:auto;right:auto;bottom:auto;border-top:0;background:transparent;padding:14px 0 0}
+  .bar-inner{max-width:none;gap:10px}
+  .send{flex:none;padding:14px 18px}
+  .tally strong{font-size:16px}
+}

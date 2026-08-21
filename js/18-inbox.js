@@ -1,0 +1,114 @@
+/* ──────────────────────────────────────────────────────────
+   18-inbox.js
+   접수함 — 4단계 상태 · 주문 카드
+   ────────────────────────────────────────────────────────── */
+import { $, esc, A } from "./00-core.js";
+/* ══════════════════════════════════════════════════════════════
+   접수함 — 4단계 상태
+   ══════════════════════════════════════════════════════════════ */
+const STATUS = [{label:"확인 대기",cls:"wait"},{label:"확인 완료",cls:"ok"},{label:"승인 완료",cls:"appr"},{label:"출고 완료",cls:"done"}];
+const FLOW = ["전자랜드 전송","더다움 확인","트라이코지 승인","출고"];
+const flowHtml = st => `<div class="flow">` + FLOW.map((f,i)=>
+  `<i class="${i<st?"done":i===st?"now":""}">${f}</i>`).join("") + `</div>`;
+
+function renderInbox(role){
+  const box = $("v"+role);
+  /* ⚠ 더다움은 넘긴 뒤에도 계속 봅니다. v30 초반에는 status<=1 만 걸러서
+     트라이코지가 승인하는 순간 더다움 목록에서 사라졌습니다 — 송장도 못 봤습니다. */
+  const all  = role===1 ? A.ORDERS.slice() : A.ORDERS.filter(o => o.status>=1);
+  const list = A.tabCut(role, all);            /* 보고 있는 갈래만 (24-bulk.js) */
+  /* 남은 일 / 다 끝남 을 맨 위에 색으로 (화면 전체 기준) → 갈래 탭 → 일괄 막대 → 카드 */
+  let head = A.stateBanner(role, all) + A.tabBar(role, all);
+  if (role === 2){
+    const warn = [...new Set(list.flatMap(o=>o.lines).filter(l=>l.w).map(l=>l.b))];
+    if (warn.length) head += `<p class="warn"><b>기종 미입력 ${warn.length}종</b> — THE_ELECTRONIC_DB.xlsx 에 기종·생산순위·소비자가가 아직 비어 있습니다.<br>${warn.join(" · ")}</p>`;
+    const appr = list.filter(o=>o.status>=2);
+    if (appr.length) head += `<p class="sect">승인 완료 ${appr.length}건 — 생산팀 전달</p>` + A.apprBtns("*", appr);
+    /* 출고할 게 남아 있을 때만 안내를 띄웁니다 — 다 끝났으면 화면을 비웁니다 */
+    if (list.some(o => o.status === 1 || o.status === 2))
+    head += `<p class="sect">출고 처리 — 셋 중 편한 것으로</p>
+      <div class="btns"><button class="act up sm" id="impShip" type="button">① 송장 엑셀 올리기<em>우체국 · 한진 · 롯데 파일을 그대로 올리면 송장번호가 자동으로 채워집니다</em></button></div>
+      <p class="ways">② <b>한 번에 출고</b> — 아래 <b>출고 완료</b> 버튼 (송장 없이도 됩니다)<br>
+         ③ <b>건별 출고</b> — 주문 카드 안의 <b>출고 완료로 표시</b> (송장을 직접 입력)</p>
+      <input type="file" id="impFile" accept=".xlsx,.xls,.csv,text/csv" class="offscreen" tabindex="-1" aria-hidden="true">`;
+  }
+  /* ★ 여러 건 한 번에 — 체크한 게 있으면 그것만, 없으면 그 구획 전체 (24-bulk.js) */
+  const bar = A.bulkBar(role, list);
+  if (bar) head += `<p class="sect">한 번에 처리</p>` + bar;
+  if (!list.length){
+    box.innerHTML = head + `<p class="empty">${A.tabOf(role, all)!=="all"
+      ? (A.tabOf(role, all)==="cust" ? "이 화면에 고객 주문이 없습니다." : "이 화면에 매대 주문이 없습니다.")
+      : (role===1?"전자랜드에서 보낸 주문이 여기에 쌓입니다.":"더다움이 확인한 주문이 여기로 넘어옵니다.")}</p>`;
+    bindBulk(role, list); return;
+  }
+  /* 구획을 갈라 놓는다 — 한 목록에 섞이면 뭘 눌러야 할지 모른다.
+     출고 완료는 트라이코지가 누르는 순간 두 화면에 같이 뜹니다(별도 확인 버튼 없음). */
+  const G = role===1
+    ? [[[0],"확인 대기"], [[1,2],"트라이코지 진행중"], [[3],"출고 완료"]]
+    : [[[1],"승인 대기"], [[2],"승인 완료 · 출고 전"], [[3],"출고 완료"]];
+  box.innerHTML = head + G.map(([sts,label])=>{
+    const g = list.filter(o=>sts.includes(o.status));
+    if (!g.length) return "";
+    return `<p class="sect">${label} ${g.length}건</p>` + g.map(o=>orderCard(o, role)).join("");
+  }).join("");
+  bindBulk(role, list);
+}
+function bindBulk(role, list){
+  A.bindBulkBar(role, list);                                   /* 24-bulk.js 가 다 합니다 */
+  A.bindShipImport();                                          /* 25-ship-import.js */
+}
+
+function orderCard(o, role){
+  return `
+    <article class="order ${o.mode === "매대 보충" ? "mA" : "mB"}${o.status === 3 ? " shipped" : ""}">
+      <div class="order-top">
+        <div><h3><span class="mchip">${o.mode}</span>${o.no}${o.to ? " · " + esc(o.to.name) : ""}</h3><p class="meta">전자랜드 · ${o.at}</p></div>
+        <span class="badges">
+          ${o.status===0 ? `<span class="badge dl ${o.dl ? "yes" : "no"}">${o.dl ? "주문서 확인함" : "아직 미확인"}</span>` : ""}
+          <span class="badge ${STATUS[o.status].cls}">${STATUS[o.status].label}</span>
+          ${A.selBox(o, role)}
+        </span>
+      </div>
+      ${flowHtml(o.status)}
+      ${o.reject ? `<p class="warn"><b>트라이코지 반려</b> — ${esc(o.reject)}</p>` : ""}
+      ${o.to ? `<div class="ship-to top"><span class="eyebrow">받는 분</span><b>${esc(o.to.name)}</b> · ${esc(o.to.tel)}<br>${o.to.zip ? `[${esc(o.to.zip)}] ` : ""}${esc(o.to.addr)}${o.to.addr2 ? " " + esc(o.to.addr2) : ""}${o.to.memo?"<br>요청: "+esc(o.to.memo):""}</div>` : ""}
+      <div class="xlwrap"><table class="xltab">
+        <thead><tr><th>25자</th><th>영문 코드10자이내</th><th>바코드</th><th>이미지</th><th>상품명</th><th>기종</th><th>디자인</th><th>발주수량</th><th>샘플 지원</th></tr></thead>
+        <tbody>${o.lines.map(l=>`<tr>
+          <td class="c25">${esc(l.s || "")}</td>
+          <td class="ccode">${esc(l.c || "")}</td>
+          <td class="cbar">${l.b}</td>
+          <td class="cimg">${l.img ? `<img src="${l.img}" alt="">` : ""}</td>
+          <td class="cname">${esc(l.n || "")}</td>
+          <td class="cmod">${esc(l.m || "")}</td>
+          <td class="cdes">${esc(l.d || "")}</td>
+          <td class="cqty">${l.q}</td>
+          <td class="csmp"></td></tr>`).join("")}</tbody>
+      </table></div>
+      <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
+      ${role===1 && o.status===0 ? `<div class="btns">
+        <button class="act form sm" data-form="${o.no}" data-mark="1">① 주문 엑셀 받기<em>${o.mode} 양식${o.dl ? " · 받음 ✓" : ""}</em></button>
+        <button class="act sm" data-ok="${o.no}"${o.dl ? "" : " disabled"}>② 확인하고 트라이코지로 넘기기<em>${o.dl ? "넘길 수 있습니다" : "먼저 ① 엑셀을 받으세요"}</em></button>
+      </div>` : ""}
+      ${role===1 && o.status>=1 ? `<button class="act ghost" type="button" disabled>${
+        o.status===1 ? "트라이코지 승인 대기" : o.status===2 ? "트라이코지 승인 완료 · 출고 전" : "출고 완료"
+      }</button>` : ""}
+      ${role===2 && o.status===1 ? `<div class="btns">
+        <button class="act sm" data-appr="${o.no}" type="button">최종 승인<em>되돌릴 수 없습니다</em></button>
+        <button class="act ghost sm" data-rej="${o.no}" type="button">더다움에 반려<em>사유를 적어 되돌립니다</em></button>
+      </div>` : ""}
+      ${role===2 && o.status>=2 ? A.apprBtns(o.no, [o]) : ""}
+      ${role===2 && o.status===2 ? `<button class="act shipout" data-done="${o.no}" type="button">출고 완료로 표시</button>` : ""}
+      ${o.ship ? `<div class="trk"><span class="eyebrow">송장</span>${o.ship.no ? `<b>${esc([o.ship.co, o.ship.no].filter(Boolean).join(" "))}</b>` : `<b>${esc(o.ship.co || "")}</b> <i>번호 없음</i>`}${o.ship.img ? `<img src="${o.ship.img}" alt="송장 이미지">` : ""}</div>` : ""}
+      ${role===0 ? `<div class="btns">
+        <button class="act form sm" data-form="${o.no}" type="button">주문서 받기<em>더다움 자료와 동일</em></button>
+        ${o.status===0
+          ? `<button class="act ghost sm" data-undo="${o.no}" type="button">되돌리기<em>담았던 수량이 돌아옵니다</em></button>`
+          : `<button class="act ghost sm" type="button" disabled>되돌리기<em>${STATUS[o.status].label} — 못 되돌립니다</em></button>`}
+      </div>` : ""}
+    </article>`;
+}
+
+
+/* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
+Object.assign(A, { orderCard, renderInbox });
