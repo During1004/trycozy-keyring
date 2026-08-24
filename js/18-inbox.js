@@ -116,19 +116,18 @@ function renderInbox(role){
     if (!g.length) return role === 1 && S.DSEC === i
       ? `<p class="empty">${label} 에 해당하는 주문이 없습니다.</p>` : "";
     const sect = `<p class="sect">${label} ${g.length}건${hint ? `<i>${hint}</i>` : ""}</p>`;
-    /* 합쳐 보기 — 같은 규칙: 체크한 게 있으면 그것만, 없으면 그 구획의 매대 전체 */
-    if (S.MERGE && role === 1){
-      const disp = g.filter(o=>!o.to), cust = g.filter(o=>o.to);
-      const mg   = anySel ? disp.filter(o=>S.SEL.has(o.no))  : disp;
-      const rest = anySel ? disp.filter(o=>!S.SEL.has(o.no)) : [];
-      return sect
-        + (mg.length >= 2 ? A.mergedCard(mg, role) : mg.map(o=>orderCard(o, role)).join(""))
-        + rest.map(o=>orderCard(o, role)).join("")
-        + cust.map(o=>orderCard(o, role)).join("");
-    }
-    return sect + g.map(o=>orderCard(o, role)).join("");
+    /* ★ 묶음(o.mg)이 같은 것끼리 한 블럭으로. 화면용이 아니라 저장소에 남는 값이라
+       미확인 → 확인 → 발송 → 주문내역까지 계속 묶인 채로 따라갑니다. */
+    /* 그 구획 전용 막대 — 미확인엔 미확인 버튼만, 확인엔 확인 버튼만 */
+    const key = role === 1 ? (i === 0 ? "un" : i === 1 ? "cf" : null) : null;
+    return sect + (key ? A.stageBar(role, g, key) : "") + A.groupByMg(g).map(grp =>
+      grp.length > 1 ? A.mergedCard(grp, role) : orderCard(grp[0], role)).join("");
   }).join("");
   bindBulk(role, list);
+  if (role === 1) G.forEach(([pred,,,i]) => {
+    const key = i === 0 ? "un" : i === 1 ? "cf" : null;
+    if (key) A.bindStageBar(role, list.filter(pred), key);
+  });
   /* 붙박이 구획 제목이 검은 머리 바로 아래에 오도록 실제 높이를 다시 잽니다.
      ⚠ 화면(전자랜드/더다움/트라이코지)마다 머리 높이가 다릅니다.
         한 번만 재두면 43px 틈이 생겨 카드가 그 사이로 비쳐 지나갑니다. */
@@ -145,7 +144,7 @@ function orderCard(o, role){
       <div class="order-top">
         <div><h3><span class="mchip">${o.mode}</span>${o.no}${o.to ? " · " + esc(o.to.name) : ""}</h3><p class="meta">전자랜드 · ${o.at}</p></div>
         <span class="badges">
-          ${o.status===0 ? `<span class="badge dl ${o.dl ? "yes" : "no"}">${o.dl ? "주문서 확인함" : "아직 미확인"}</span>` : ""}
+          ${o.status===0 ? `<span class="badge dl ${o.dl ? "yes" : "no"}">${o.dl ? "확인함" : "아직 미확인"}</span>${o.dl && o.xl ? `<span class="badge xl">엑셀 받음</span>` : ""}` : ""}
           <span class="badge ${STATUS[o.status].cls}">${STATUS[o.status].label}</span>
           ${A.selBox(o, role)}
         </span>
@@ -174,10 +173,14 @@ function orderCard(o, role){
       </table></div>
       ${moneyRow(o, role)}
       <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
-      ${role===1 && o.status===0 ? `<div class="btns">
-        <button class="act form sm" data-form="${o.no}" data-mark="1">① 주문 엑셀 받기<em>${o.mode} 양식${o.dl ? " · 받음 ✓" : ""}</em></button>
-        <button class="act sm" data-ok="${o.no}"${o.dl ? "" : " disabled"}>② 확인하고 트라이코지로 넘기기<em>${o.dl ? "넘길 수 있습니다" : "먼저 ① 엑셀을 받으세요"}</em></button>
-      </div>${o.dl ? `<button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 미확인으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}` : ""}
+      ${role===1 && o.status===0 && !o.dl ? `<div class="btns">
+        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 확인<em>확인 칸으로 보냅니다</em></button>
+      </div>` : ""}
+      ${role===1 && o.status===0 && o.dl ? `<div class="btns">
+        <button class="act s2 sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${o.mode} 양식${o.xl ? " · 받았습니다" : ""}</em></button>
+        <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기<em>넘기면 발송으로 갑니다</em></button>
+      </div>
+      <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 미확인으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}
       ${role===1 && o.status>=1 ? `<button class="act ghost" type="button" disabled>${
         o.status===1 ? "트라이코지 승인 대기" : o.status===2 ? "트라이코지 승인 완료 · 출고 전" : "출고 완료"
       }</button>` : ""}

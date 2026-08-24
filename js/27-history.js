@@ -81,7 +81,8 @@ function paint(){
   if (c) c.innerHTML = `<b>${list.length}</b>건 보임 · 전체 ${all.length}건`;
   const box = $("histList");
   if (box) box.innerHTML = list.length
-    ? list.map(o => A.orderCard(o, 1)).join("")
+    /* ★ 묶음(o.mg)은 주문내역에서도 한 블럭으로 — 3개월 기록을 되짚을 때 합친 그대로 보입니다 */
+    ? A.groupByMg(list).map(g => g.length > 1 ? A.mergedCard(g, 1) : A.orderCard(g[0], 1)).join("")
     : `<p class="empty">${all.length ? "조건에 맞는 주문이 없습니다.<br>위 조건을 지우고 다시 보세요."
                                      : "아직 주문이 없습니다."}</p>`;
   const on = !!(F.qRaw || F.st !== "all" || F.days !== "all");

@@ -1,15 +1,32 @@
 /* ──────────────────────────────────────────────────────────
    28-merge.js
-   더다움 "합쳐 보기" — 매대 주문 여러 건을 화면에서 한 블럭으로
-   (2026-08-24 사용자 요청: "여러 블럭이 하나 블럭으로 됐으면")
+   더다움 — 묶음(합치기) · 단계 이동 · 대시보드 클릭
+   (2026-08-24 사용자 지시)
 
-   ★ 화면에서만 합칩니다. 저장소는 손대지 않습니다.
-     원본 주문번호가 그대로 살아 있어야 전자랜드 `내 주문` 추적과
-     되짚기가 안 깨집니다. 펼치기를 누르면 즉시 원래대로 돌아옵니다.
+   ★ 묶음은 **저장소에 남습니다** (`주문.묶음`).
+     화면용 토글이 아니라, 미확인 → 확인 → 발송 → 주문내역까지
+     합쳐진 채로 따라갑니다. 3개월 기록을 되짚을 때 그대로 보입니다.
+
+   ★ 단계
+       ① 미확인  [⊕ 합치기] [✓ 확인]
+       ② 확인    [① 엑셀 다운로드] [② 트라이코지로 넘기기] [↩ 미확인으로]
+       ③ 발송    (손댈 것 없음)
+     `자료받음(dl)` = 확인했다 · `엑셀받음(xl)` = 엑셀을 받았다. 둘은 별개입니다.
    ────────────────────────────────────────────────────────── */
 import { S, esc, A } from "./00-core.js";
 
-/* ── 바코드로 묶어 수량만 더한다 ───────────────────────────── */
+/* ── 묶음끼리 모으기 — 순서는 원래 목록 순서를 지킵니다 ────── */
+function groupByMg(list){
+  const out = [], seen = new Map();
+  list.forEach(o => {
+    if (!o.mg){ out.push([o]); return; }
+    const g = seen.get(o.mg);
+    if (g) g.push(o);
+    else { const a = [o]; seen.set(o.mg, a); out.push(a); }
+  });
+  return out;
+}
+/* ── 바코드로 묶어 수량 더하기 ─────────────────────────────── */
 function mergeLines(list){
   const m = new Map();
   list.forEach(o => (o.lines || []).forEach(l => {
@@ -19,7 +36,6 @@ function mergeLines(list){
   }));
   return [...m.values()];
 }
-/* 합친 줄들의 금액 — 18-inbox 의 sums 와 같은 셈법 */
 function mergeSums(lines){
   let cons = 0, e = 0, t = 0, eN = 0, tN = 0;
   lines.forEach(l => {
@@ -32,29 +48,33 @@ function mergeSums(lines){
 }
 const hasP = lines => !!(A.PRICE && lines.some(l => { const p = A.priceOf(l.b); return p && (p.e != null || p.t != null); }));
 
-/* ── 합본 카드 ─────────────────────────────────────────────── */
+/* ── 묶음 블럭 ─────────────────────────────────────────────── */
 function mergedCard(list, role){
   const lines = mergeLines(list);
   const nos   = list.map(o => o.no);
-  const ready = list.every(o => o.dl);        /* 전부 엑셀을 받았을 때만 넘길 수 있습니다 */
-  const got   = list.filter(o => o.dl).length;
   const st    = list[0].status;
+  const dl    = list.every(o => o.dl);
+  const xl    = list.every(o => o.xl);
   const total = lines.reduce((s,l) => s + l.q, 0);
   const price = role !== 0 && hasP(lines);
   const m     = mergeSums(lines);
   const part  = n => n < m.all ? `<i class="pnote">${m.all - n}종 값 없음</i>` : "";
-  const split = lines.filter(l => l._nos.length > 1).length;   /* 여러 주문에 걸친 상품 수 */
+  const split = lines.filter(l => l._nos.length > 1).length;
+  const allSel = list.every(o => S.SEL.has(o.no));
+  const stage = st >= 1 ? "s3" : dl ? "s2" : "s1";
 
   return `
-  <article class="order mA merged">
+  <article class="order mA merged ${stage}${st === 3 ? " shipped" : ""}">
     <div class="order-top">
       <div>
-        <h3><span class="mchip mg">합본</span>매대 ${list.length}건을 하나로</h3>
-        <p class="meta">주문번호 ${nos.length}개 · 아래 표는 <b>상품별로 더한 수량</b>입니다</p>
+        <h3><span class="mchip mg">묶음</span>매대 ${list.length}건이 한 묶음</h3>
+        <p class="meta">아래 표는 <b>상품별로 더한 수량</b>입니다 · 주문번호 ${nos.length}개는 그대로 살아 있습니다</p>
       </div>
       <span class="badges">
-        <span class="badge dl ${ready ? "yes" : "no"}">${ready ? "전부 확인함" : `${got}/${list.length} 확인함`}</span>
+        ${st === 0 ? `<span class="badge dl ${dl ? "yes" : "no"}">${dl ? "확인함" : "아직 미확인"}</span>` : ""}
+        ${st === 0 && dl && xl ? `<span class="badge xl">엑셀 받음</span>` : ""}
         <span class="badge ${A.STATUS[st].cls}">${A.STATUS[st].label}</span>
+        ${A.canPick(list[0], role) ? `<label class="selbox"><input type="checkbox" data-mgsel="${nos.join(",")}"${allSel ? " checked" : ""}></label>` : ""}
       </span>
     </div>
     <p class="mgnos"><span class="eyebrow">합친 주문</span>${nos.map(n=>`<code>${esc(n)}</code>`).join("")}</p>
@@ -85,58 +105,106 @@ function mergedCard(list, role){
         ${m.eN && m.tN ? `<b class="mg"><em>더다움 남는 것</em>${A.money(m.e - m.t)}</b>` : ""}
       </div></div>` : ""}
     <p class="xlnote">${lines.length} 품목 · 합계 <b>${total}</b> 개${
-      split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 있어 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
-    ${role === 1 && st === 0 ? `<div class="btns">
-      <button class="act form sm" data-mgdl="${nos.join(",")}" type="button">① 엑셀 합본 받기<em>합계·주문별 두 장이 한 파일에${ready ? " · 받음 ✓" : ""}</em></button>
-      <button class="act sm" data-mgok="${nos.join(",")}" type="button"${ready ? "" : " disabled"}>② 확인하고 트라이코지로 넘기기<em>${ready ? `${list.length}건 한 번에 넘김` : "먼저 ① 엑셀을 받으세요"}</em></button>
-    </div>${got ? `<button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 미확인으로 되돌리기<em>${got}건 · 묶음을 풀고 다시 정리합니다</em></button>` : ""}` : ""}
+      split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
+    ${role === 1 && st === 0 && !dl ? `<div class="btns">
+      <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 확인<em>이 묶음 ${list.length}건을 확인 칸으로</em></button>
+      <button class="act s1 sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로 되돌립니다</em></button>
+    </div>` : ""}
+    ${role === 1 && st === 0 && dl ? `<div class="btns">
+      <button class="act s2 sm${xl ? " line" : ""}" data-mgdl="${nos.join(",")}" type="button">${xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>합계·주문별 두 장이 한 파일에${xl ? " · 받았습니다" : ""}</em></button>
+      <button class="act s2 sm" data-mgok="${nos.join(",")}" type="button">② 트라이코지로 넘기기<em>${list.length}건 한 번에</em></button>
+    </div>
+    <div class="btns">
+      <button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 미확인으로 되돌리기<em>주문 내용은 그대로입니다</em></button>
+      <button class="act ghost sm" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로</em></button>
+    </div>` : ""}
   </article>`;
 }
 
-/* ── 켜고 끄기 ─────────────────────────────────────────────── */
-function mergeToggle(role){
-  if (role !== 1) return "";
-  return `<button type="button" class="mgtog${S.MERGE ? " on" : ""}" id="mgTog${role}"
-    title="매대 주문 여러 건을 상품별로 더해 한 블럭으로 봅니다">${S.MERGE ? "펼쳐 보기" : "합쳐 보기"}</button>`;
-}
-function bindMergeToggle(role){
-  const b = document.getElementById("mgTog" + role);
-  if (b) b.onclick = ()=>{ S.MERGE = !S.MERGE; A.renderInbox(1); };
-}
-
-/* ── 합본 카드 버튼 (화면 어디에 있든 한 곳에서 받습니다) ──── */
+/* ══════════════════════════════════════════════════════════════
+   단계 옮기기
+   ══════════════════════════════════════════════════════════════ */
 const ordersOf = s => String(s || "").split(",").map(n => A.ORDERS.find(o => o.no === n)).filter(Boolean);
-/* 대시보드 3칸 — 누르면 그 구획만, 한 번 더 누르면 전부 */
-document.addEventListener("click", e => {
-  const s = e.target.closest("[data-dsec]");
-  if (s){ const i = +s.dataset.dsec; S.DSEC = (S.DSEC === i) ? null : i; A.renderInbox(1); return; }
-  const d = e.target.closest("[data-mgdl]");
-  if (d){ A.dlBulkForm(ordersOf(d.dataset.mgdl), d); return; }
-  const k = e.target.closest("[data-mgok]");
-  if (k && !k.disabled){ A.askHandOver(ordersOf(k.dataset.mgok)); return; }
-  const u = e.target.closest("[data-mgun]");
-  if (u){ askUnconfirm(ordersOf(u.dataset.mgun)); return; }
-  const c = e.target.closest("[data-unconf]");
-  if (c){ askUnconfirm(ordersOf(c.dataset.unconf)); }
-});
+const redraw = () => { A.renderInbox(1); A.renderInbox(2); A.renderMine?.(); A.renderHistory?.(); };
 
-/* ── ↩ 미확인으로 되돌리기 (2026-08-24 사용자 요청 "백기능") ───
-   `자료받음` 표시만 지웁니다. 주문 내용·주문번호·수량은 손대지 않습니다.
-   되돌리면 ① 미확인 으로 내려가서 묶음을 다시 짤 수 있습니다. */
-function askUnconfirm(list){
-  if (!list.length) return;
-  A.openSheet(`<b class="big">미확인으로 되돌리기</b>
-    <p class="sum"><b>${list.length}</b> 건을 <b>① 미확인</b> 으로 내립니다.</p>
-    ${A.listHtml(list)}
-    <p class="ask">받았던 <b>엑셀 확인 표시가 지워집니다.</b> 다시 묶어서 엑셀을 새로 받으면 됩니다.<br>
-       <b>주문 내용·수량·주문번호는 그대로입니다.</b> 되돌릴까요?</p>`,
+/* ⊕ 합치기 — 고른 매대 주문에 같은 묶음 이름을 붙입니다 */
+function askMerge(list){
+  const able = list.filter(o => !o.to && o.status === 0 && !o.dl);
+  if (able.length < 2) return;
+  const name = "M-" + able.map(o => o.no).sort()[0];
+  A.openSheet(`<b class="big">⊕ 합치기</b>
+    <p class="sum">매대 <b>${able.length}</b> 건을 <b>한 묶음</b>으로 만듭니다. 같은 상품은 수량이 더해져 보입니다.</p>
+    ${A.listHtml(able)}
+    <p class="ask">묶은 뒤에도 <b>주문번호는 그대로 살아 있고</b>, <b>묶음 풀기</b>로 언제든 되돌립니다.<br>
+       발송·주문내역에도 묶인 채로 남습니다. 합칠까요?</p>`,
     () => {
-      list.forEach(o => { o.dl = false; A.store?.onPatch(o, { dl:false }); });   /* [저장소 고리] */
-      S.SEL.clear();
-      A.renderInbox(1); A.renderMine();
+      able.forEach(o => { o.mg = name; A.store?.onPatch(o, { mg:name }); });   /* [저장소 고리] */
+      S.SEL.clear(); redraw();
+    }, "", `${able.length}건 합치기`);
+}
+/* 묶음 풀기 */
+function askUnmerge(list){
+  const able = list.filter(o => o.mg);
+  if (!able.length) return;
+  A.openSheet(`<b class="big">묶음 풀기</b>
+    <p class="sum"><b>${able.length}</b> 건을 낱개로 되돌립니다.</p>
+    ${A.listHtml(able)}
+    <p class="ask">주문 내용·수량·단계는 그대로입니다. 화면에서만 낱개로 갈라집니다. 풀까요?</p>`,
+    () => {
+      able.forEach(o => { o.mg = null; A.store?.onPatch(o, { mg:null }); });   /* [저장소 고리] */
+      S.SEL.clear(); redraw();
+    }, "", "묶음 풀기");
+}
+/* ✓ 확인 — 미확인 → 확인 */
+function askConfirm(list){
+  const able = list.filter(o => o.status === 0 && !o.dl);
+  if (!able.length) return;
+  A.openSheet(`<b class="big">✓ 확인</b>
+    <p class="sum"><b>${able.length}</b> 건을 <b>② 확인</b> 칸으로 보냅니다.</p>
+    ${A.listHtml(able)}
+    <p class="ask">확인 칸에서 <b>엑셀을 받고 트라이코지로 넘기게</b> 됩니다.<br>
+       잘못 눌러도 <b>↩ 미확인으로 되돌리기</b> 가 있습니다. 보낼까요?</p>`,
+    () => {
+      able.forEach(o => { o.dl = true; A.store?.onPatch(o, { dl:true }); });   /* [저장소 고리] */
+      S.SEL.clear(); redraw();
+    }, "ac", `${able.length}건 확인`);
+}
+/* ↩ 미확인으로 되돌리기 — 확인·엑셀 표시만 지웁니다 */
+function askUnconfirm(list){
+  const able = list.filter(o => o.status === 0 && o.dl);
+  if (!able.length) return;
+  A.openSheet(`<b class="big">↩ 미확인으로 되돌리기</b>
+    <p class="sum"><b>${able.length}</b> 건을 <b>① 미확인</b> 으로 내립니다.</p>
+    ${A.listHtml(able)}
+    <p class="ask">확인·엑셀 표시가 지워집니다. 다시 묶어서 처리하면 됩니다.<br>
+       <b>주문 내용·수량·주문번호·묶음은 그대로입니다.</b> 되돌릴까요?</p>`,
+    () => {
+      able.forEach(o => { o.dl = false; o.xl = false; A.store?.onPatch(o, { dl:false, xl:false }); });   /* [저장소 고리] */
+      S.SEL.clear(); redraw();
     }, "", "되돌리기");
 }
 
+/* ── 화면 어디에 있든 한 곳에서 받습니다 ───────────────────── */
+document.addEventListener("click", e => {
+  const t = (a) => e.target.closest("[data-" + a + "]");
+  let x;
+  if ((x = t("dsec"))){ const i = +x.dataset.dsec; S.DSEC = (S.DSEC === i) ? null : i; A.renderInbox(1); return; }
+  if ((x = t("mgdl"))){  A.dlBulkForm(ordersOf(x.dataset.mgdl), x); return; }
+  if ((x = t("mgok")) && !x.disabled){ A.askHandOver(ordersOf(x.dataset.mgok)); return; }
+  if ((x = t("mgconf"))){ askConfirm(ordersOf(x.dataset.mgconf)); return; }
+  if ((x = t("mgun"))){   askUnconfirm(ordersOf(x.dataset.mgun)); return; }
+  if ((x = t("mgun2"))){  askUnmerge(ordersOf(x.dataset.mgun2)); return; }
+  if ((x = t("conf"))){   askConfirm(ordersOf(x.dataset.conf)); return; }
+  if ((x = t("unconf"))){ askUnconfirm(ordersOf(x.dataset.unconf)); }
+});
+/* 묶음 블럭의 체크칸 — 안에 든 것 전부를 같이 켜고 끕니다 */
+document.addEventListener("change", e => {
+  const c = e.target.closest("[data-mgsel]");
+  if (!c) return;
+  ordersOf(c.dataset.mgsel).forEach(o => c.checked ? S.SEL.add(o.no) : S.SEL.delete(o.no));
+  redraw();
+});
+
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { askUnconfirm, bindMergeToggle, mergeLines, mergeToggle, mergedCard });
+Object.assign(A, { askConfirm, askMerge, askUnconfirm, askUnmerge, groupByMg, mergeLines, mergedCard });

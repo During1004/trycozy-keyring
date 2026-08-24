@@ -104,7 +104,7 @@ function canPick(o, role){
 /* ── 일괄 막대 ────────────────────────────────────────────── */
 /* ⚠ 세 화면(전자랜드·더다움·트라이코지)이 동시에 그려져 있습니다.
    id 가 겹치면 엉뚱한 화면의 버튼이 잡히므로 **역할 번호를 뒤에 붙입니다.** */
-const ID = (base, role) => base + role;
+const ID = (base, role, key) => base + role + (key || "");
 function bulkBar(role, list){
   const able = list.filter(o => canPick(o, role));
   if (able.length < 2) return "";                       // 1건이면 카드 버튼으로 충분합니다
@@ -113,7 +113,6 @@ function bulkBar(role, list){
       <label class="selbox all"><input type="checkbox" id="${ID("selAll",role)}"${allOn ? " checked" : ""}><b>전체 선택</b></label>
       <span id="${ID("selCnt",role)}">${isPicked(able) ? pick(able).length + "건 고름" : "고른 것 없음 — 누르면 전체 " + able.length + "건"}</span>
       ${isPicked(able) ? `<button type="button" class="lnk" id="${ID("selClear",role)}">선택 해제</button>` : ""}
-      ${A.mergeToggle ? A.mergeToggle(role) : ""}
     </div>`;
 
   let btns = "";
@@ -124,12 +123,10 @@ function bulkBar(role, list){
     btns = `<button class="act form sm" id="${ID("bkMineDl",role)}" type="button">주문서 합본 받기<em>${cnt(able, 1)} · ${files(pick(able))}</em></button>`;
   }
   if (role === 1){
-    const wait = able.filter(o => o.status === 0);
-    const ready = pick(wait).length > 0 && pick(wait).every(o => o.dl);
-    const got = pick(wait).filter(o => o.dl);       /* 이미 확인(엑셀 받음) 된 것 */
-    btns = `<button class="act form sm" id="${ID("bkDl",role)}" type="button">① 엑셀 합본 받기<em>${cnt(wait, 1)} · ${files(pick(wait))}${ready ? " · 받음 ✓" : ""}</em></button>
-      <button class="act sm" id="${ID("bkOk",role)}" type="button"${ready ? "" : " disabled"}>② 트라이코지로 넘기기<em>${ready ? cnt(wait) + " 넘김" : "먼저 ① 을 받으세요"}</em></button>
-      ${got.length ? `<button class="act ghost sm" id="${ID("bkUn",role)}" type="button">↩ 미확인으로 되돌리기<em>${got.length}건 · 다시 정리하려면</em></button>` : ""}`;
+    /* ★ 2026-08-24 — 더다움은 위쪽 통합 막대를 쓰지 않습니다.
+       구획(미확인/확인)마다 그 단계 버튼만 따로 답니다 → stageBar().
+       한 줄에 5개가 몰려 있으면 어느 버튼이 어느 단계 것인지 알 수 없습니다. */
+    return "";
   }
   if (role === 2){
     const wait = able.filter(o => o.status === 1);
@@ -139,6 +136,64 @@ function bulkBar(role, list){
        <button class="act ghost sm" id="${ID("bkShip",role)}" type="button"${pick(appr).length ? "" : " disabled"}>출고 완료<em>${appr.length ? cnt(appr, 1) : "승인된 건 없음"}</em></button>`;
   }
   return `<div class="bulkbox">${head}<div class="btns bulkbtns">${btns}</div></div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   구획 전용 막대 (2026-08-24) — 더다움
+   `① 미확인` 위에는 미확인 버튼만, `② 확인` 위에는 확인 버튼만.
+   체크칸도 그 구획 것만 켜고 끕니다.
+   ══════════════════════════════════════════════════════════════ */
+const STAGE = {
+  un: { key:"un", tone:"s1", name:"미확인" },
+  cf: { key:"cf", tone:"s2", name:"확인" },
+};
+function stageBar(role, g, key){
+  const able = g.filter(o => canPick(o, role));
+  /* ⚠ 주문 건수가 아니라 **블럭 개수**로 셉니다. 3건이 한 묶음이면 블럭은 1개 —
+     그 블럭 안에 이미 버튼이 있으므로 막대는 군더더기입니다. */
+  if ((A.groupByMg ? A.groupByMg(able).length : able.length) < 2) return "";
+  const on    = able.filter(o => S.SEL.has(o.no));
+  const sel   = on.length ? on : able;
+  const allOn = able.every(o => S.SEL.has(o.no));
+  const files = l => { const d = l.filter(o=>!o.to).length, c = l.filter(o=>o.to).length;
+                       return d && c ? "파일 2개 (매대 · 고객)" : c ? "고객 파일 1개" : "매대 파일 1개"; };
+  let btns = "";
+  if (key === "un"){
+    const mgAble = sel.filter(o => !o.to);
+    btns = `<button class="act s1 sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>⊕ 합치기<em>${
+        mgAble.length >= 2 ? mgAble.length + "건을 한 묶음으로" : "매대 2건 이상 골라 주세요"}</em></button>
+      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ 확인<em>${sel.length}건을 확인 칸으로</em></button>`;
+  } else {
+    const allXl = sel.every(o => o.xl);
+    btns = `<button class="act s2 sm${allXl ? " line" : ""}" id="${ID("bkDl",role,key)}" type="button">${
+        allXl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${sel.length}건 · ${files(sel)}${allXl ? " · 받았습니다" : ""}</em></button>
+      <button class="act s2 sm" id="${ID("bkOk",role,key)}" type="button">② 트라이코지로 넘기기<em>${sel.length}건 넘김</em></button>
+      <button class="act ghost sm back" id="${ID("bkUn",role,key)}" type="button">↩ 미확인으로<em>${sel.length}건 되돌림</em></button>`;
+  }
+  return `<div class="bulkbox ${STAGE[key].tone}">
+      <div class="bulkhead">
+        <label class="selbox all"><input type="checkbox" id="${ID("selAll",role,key)}"${allOn ? " checked" : ""}><b>전체 선택</b></label>
+        <span id="${ID("selCnt",role,key)}">${on.length ? on.length + "건 고름" : "고른 것 없음 — 누르면 이 칸 전체 " + able.length + "건"}</span>
+        ${on.length ? `<button type="button" class="lnk" id="${ID("selClear",role,key)}">선택 해제</button>` : ""}
+      </div>
+      <div class="btns bulkbtns">${btns}</div>
+    </div>`;
+}
+function bindStageBar(role, g, key){
+  const able = g.filter(o => canPick(o, role));
+  if ((A.groupByMg ? A.groupByMg(able).length : able.length) < 2) return;
+  const on  = able.filter(o => S.SEL.has(o.no));
+  const sel = on.length ? on : able;
+  const all = $(ID("selAll", role, key));
+  if (all) all.onchange = () => { able.forEach(o => all.checked ? S.SEL.add(o.no) : S.SEL.delete(o.no)); redrawAll(); };
+  const clr = $(ID("selClear", role, key));
+  if (clr) clr.onclick = () => { able.forEach(o => S.SEL.delete(o.no)); redrawAll(); };
+  const go = (base, fn) => { const b = $(ID(base, role, key)); if (b) b.onclick = () => fn(b); };
+  go("bkMerge", () => A.askMerge(sel));
+  go("bkConf",  () => A.askConfirm(sel));
+  go("bkDl",    b => A.dlBulkForm(sel, b));
+  go("bkOk",    () => askHandOver(sel));
+  go("bkUn",    () => A.askUnconfirm(sel));
 }
 
 /* ── 클릭 연결 ────────────────────────────────────────────── */
@@ -157,12 +212,17 @@ function bindBulkBar(role, list){
   const go = (base, fn) => { const b = $(ID(base, role)); if (b) b.onclick = () => fn(b); };
 
   go("bkMineDl", b => A.dlBulkForm(pick(able), b, true));
-  go("bkDl",     b => A.dlBulkForm(pick(able.filter(o => o.status === 0)), b));
-  go("bkOk",     () => askHandOver(pick(able.filter(o => o.status === 0))));
-  go("bkUn",     () => A.askUnconfirm(pick(able.filter(o => o.status === 0 && o.dl))));
+  /* 막대에 그릴 때와 **똑같은 기준**으로 골라야 버튼 글자와 실제 동작이 안 어긋납니다 */
+  const anySel = able.some(o => S.SEL.has(o.no));
+  const take = l => anySel ? l.filter(o => S.SEL.has(o.no)) : l;
+  const stage = (dl) => take(able.filter(o => o.status === 0 && !!o.dl === dl));
+  go("bkDl",     b => A.dlBulkForm(stage(true), b));
+  go("bkOk",     () => askHandOver(stage(true)));
+  go("bkMerge",  () => A.askMerge(stage(false)));
+  go("bkConf",   () => A.askConfirm(stage(false)));
+  go("bkUn",     () => A.askUnconfirm(stage(true)));
   go("bkAppr",   () => askApproveMany(pick(able.filter(o => o.status === 1))));
   go("bkShip",   () => askShipMany(pick(able.filter(o => o.status === 2))));
-  if (A.bindMergeToggle) A.bindMergeToggle(role);      /* 합쳐 보기 켜고 끄기 (28-merge.js) */
 }
 /* 세 화면을 같이 다시 그립니다 — 한 곳에서 고르면 다른 화면 숫자도 맞아야 합니다 */
 function redrawAll(){ A.renderInbox(1); A.renderInbox(2); A.renderMine(); }
@@ -248,4 +308,4 @@ function listHtml(list){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { askApproveMany, askHandOver, askShipMany, bindBulkBar, bulkBar, canPick, isTodo, listHtml, pickSel: pick, selBox, stateBanner, tabBar, tabCut, tabOf });
+Object.assign(A, { askApproveMany, askHandOver, askShipMany, bindBulkBar, bindStageBar, bulkBar, canPick, isTodo, listHtml, pickSel: pick, selBox, stageBar, stateBanner, tabBar, tabCut, tabOf });

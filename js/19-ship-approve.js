@@ -86,7 +86,7 @@ function askReject(o){
     <p class="sum">확인 대기로 되돌립니다.<br>더다움은 자료를 <b>다시 받아야</b> 넘길 수 있습니다.</p>
     <label class="rejwrap"><span>사유</span><input id="rejMemo" placeholder="예) 수량 확인 필요" autocomplete="off"></label>`,
     ()=>{
-      o.status = 0; o.dl = false;
+      o.status = 0; o.dl = false; o.xl = false;
       o.reject = ($("rejMemo")?.value || "").trim() || "사유 없음";
       A.store?.onPatch(o, {status:0, dl:false, memo:o.reject});   /* [저장소 고리] 사유를 담은 뒤에 보냅니다 */
       A.renderInbox(1); A.renderInbox(2); A.renderMine(); A.showSent();

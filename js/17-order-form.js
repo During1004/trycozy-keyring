@@ -149,7 +149,9 @@ function dlBulkForm(list, btn, mine){
       A.saveBlob(blob, bulkName(mine, "고객", ship.length));
     }
     if (mine) return;
-    list.forEach(o=>{ o.dl = true; A.store?.onPatch(o, {dl:true}); });   /* [저장소 고리] */
+    /* ★ 2026-08-24 — 엑셀을 받아도 단계는 안 넘어갑니다. `엑셀받음` 표시만 켭니다.
+       미확인 → 확인 은 사람이 `확인` 을 눌러야 넘어갑니다. */
+    list.forEach(o=>{ o.xl = true; A.store?.onPatch(o, {xl:true}); });   /* [저장소 고리] */
     setTimeout(()=>A.renderInbox(1), 1000);
   });
 }
@@ -179,7 +181,7 @@ function dlOrderForm(o, btn, mark){
     });
     const blob = await A.XLSXW.build(sheets);
     A.saveBlob(blob, `${ymd(o)}_${stage}_${kindOf(o)}_${seq6(o)}.xlsx`);
-    if (mark){ o.dl = true; A.store?.onPatch(o, {dl:true});   /* [저장소 고리] */ setTimeout(()=>A.renderInbox(1), 1000); }   // 더다움 게이트만 푼다
+    if (mark){ o.xl = true; A.store?.onPatch(o, {xl:true});   /* [저장소 고리] */ setTimeout(()=>A.renderInbox(1), 1000); }   // 엑셀받음 표시만
   });
 }
 

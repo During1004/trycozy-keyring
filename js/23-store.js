@@ -67,7 +67,9 @@ const orderRow = o => ({
   주문처:   (ACC && ACC.주문처) || "전자랜드",
   유형:     o.to ? "개인" : "매대",
   상태:     o.status | 0,
-  자료받음: !!o.dl,
+  자료받음: !!o.dl,        /* ★ 뜻 바뀜: 엑셀 받음 → 더다움이 확인함 */
+  묶음:     o.mg || null,
+  엑셀받음: !!o.xl,
   수령인:   o.to ? o.to.name  : null,
   전화:     o.to ? o.to.tel   : null,
   우편번호: o.to ? o.to.zip   : null,
@@ -124,6 +126,8 @@ function toOrder(r) {
     lines,
     status: r.상태 | 0,
     dl: !!r.자료받음,
+    mg: r.묶음 || null,
+    xl: !!r.엑셀받음,
     ship: (r.택배사 || r.송장번호 || r.송장이미지)
       ? { co: r.택배사 || "", no: r.송장번호 || "", img: r.송장이미지 || null } : null,
     reject: r.확인메모 || "",      // 트라이코지 반려 사유
@@ -212,6 +216,8 @@ const store = {
       const body = {};
       if ("status" in fields) body.상태 = fields.status | 0;
       if ("dl"     in fields) body.자료받음 = !!fields.dl;
+      if ("mg"     in fields) body.묶음     = fields.mg || null;
+      if ("xl"     in fields) body.엑셀받음 = !!fields.xl;
       if ("memo"   in fields) body.확인메모 = fields.memo || null;
       if ("ship"   in fields) {
         body.택배사   = fields.ship ? fields.ship.co  : null;

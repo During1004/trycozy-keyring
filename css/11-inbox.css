@@ -264,3 +264,48 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 .act.ghost.back{margin-top:8px;border-color:var(--accent);color:var(--accent-lo);background:#fff}
 .act.ghost.back:hover{background:#FFF0F5}
 .act.ghost.back em{color:var(--muted)}
+
+/* ══════════════════════════════════════════════════════════
+   단계 색 (2026-08-24) — "검정이라 됐는지 안 됐는지 모르겠다"
+   색은 **두 개만** 씁니다. 대시보드와 같은 색이라 눈이 안 헷갈립니다.
+     s1 분홍 = ① 미확인 에서 할 일
+     s2 파랑 = ② 확인   에서 할 일
+   그리고 규칙 하나 —
+     **아직 안 한 일 = 색으로 꽉 참 / 이미 한 일 = 흰바탕 + 색 테두리**
+   ══════════════════════════════════════════════════════════ */
+.act.s1{background:var(--accent);box-shadow:0 3px 0 var(--accent-lo);color:#fff}
+.act.s2{background:var(--blue);  box-shadow:0 3px 0 var(--blue-lo);  color:#fff}
+.act.s1:hover{background:var(--accent-lo)}
+.act.s2:hover{background:var(--blue-lo)}
+.act.line{background:#fff;box-shadow:none;border:1.5px solid currentColor;font-weight:700}
+.act.s1.line{color:var(--accent-lo);border-color:var(--accent)}
+.act.s2.line{color:var(--blue);border-color:var(--blue)}
+.act.s1.line:hover{background:#FFF0F5} .act.s2.line:hover{background:#EEF4FE}
+.act.line em{color:var(--muted);opacity:1}
+.act.line:active{transform:translateY(1px);box-shadow:none}
+/* 버튼이 3~4개까지 늘어날 수 있어 줄바꿈 허용 */
+.btns{flex-wrap:wrap}
+.btns .act{flex:1 1 190px;min-width:0}
+.pickhint{font-size:12px;color:var(--muted);margin:4px 2px}
+
+/* 묶음 블럭도 단계 색을 따라갑니다 */
+.order.merged.s1{border-color:var(--accent);box-shadow:0 4px 0 var(--accent-lo),0 6px 14px rgba(232,68,127,.18)}
+.order.merged.s2{border-color:var(--blue);  box-shadow:0 4px 0 var(--blue-lo),  0 6px 14px rgba(29,107,224,.18)}
+.order.merged.s3{border-color:var(--cyan);  box-shadow:0 4px 0 var(--cyan-lo),  0 6px 14px rgba(18,147,159,.18)}
+.order.merged.s2 .mchip.mg{background:var(--blue)} .order.merged.s2 .mgnos{background:#EEF4FE}
+.order.merged.s2 .mgnos code{color:var(--blue);border-color:#C7D9F7}
+.order.merged.s3 .mchip.mg{background:var(--cyan)} .order.merged.s3 .mgnos{background:#E9F6F7}
+.order.merged.s3 .mgnos code{color:var(--cyan-lo);border-color:#B9E0E4}
+.order.merged.s2 .xltab tr.mgrow td{background:#F4F8FF}
+.order.merged.s3 .xltab tr.mgrow td{background:#F0F9FA}
+
+/* 엑셀 받음 배지 */
+.badge.xl{background:#EEF4FE;color:var(--blue);border:1px solid #C7D9F7}
+
+/* ── 구획 전용 막대 (2026-08-24) ────────────────────────────
+   위쪽에 5개를 몰아 놓으면 어느 버튼이 어느 단계 것인지 알 수 없다는 지적.
+   그 구획 바로 아래에 그 단계 버튼만 답니다. 왼쪽 색띠로 단계를 표시. */
+.bulkbox.s1{border-left:4px solid var(--accent)}
+.bulkbox.s2{border-left:4px solid var(--blue)}
+.bulkbox.s1,.bulkbox.s2{margin-top:0;margin-bottom:12px}
+.bulkbox.s1 .bulkhead b,.bulkbox.s2 .bulkhead b{color:var(--ink)}
