@@ -309,3 +309,26 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 .bulkbox.s2{border-left:4px solid var(--blue)}
 .bulkbox.s1,.bulkbox.s2{margin-top:0;margin-bottom:12px}
 .bulkbox.s1 .bulkhead b,.bulkbox.s2 .bulkhead b{color:var(--ink)}
+
+/* ══════════════════════════════════════════════════════════
+   버튼 색 — 뜻이 있는 색 (2026-08-24 사용자 지시)
+   "같은 색이 나란히 있어 뭐가 뭔지 모르겠다"
+     보라  ⊕ 합치기 / 묶음 풀기   — 묶는 동작. 다른 데 안 쓰는 색
+     핫핑크 ✓ 확인               ┐ **다음 단계로 미는 동작만** 단계 색을 씁니다
+     블루  ② 트라이코지로 넘기기  ┘ (대시보드 색과 짝이 맞습니다)
+     초록  ① 엑셀 다운로드        — 엑셀은 어디서나 초록. 파일 받는 동작
+   ══════════════════════════════════════════════════════════ */
+.act.mgc{background:#7A4FBF;box-shadow:0 3px 0 #573388;color:#fff}
+.act.mgc:hover{background:#6A41AC}
+.act.mgc.line{background:#fff;box-shadow:none;border:1.5px solid #7A4FBF;color:#5D3A96}
+.act.mgc.line:hover{background:#F5F0FC}
+.act.xlc{background:#2E7D4F;box-shadow:0 3px 0 #1F5A38;color:#fff}
+.act.xlc:hover{background:#358C59}
+.act.xlc.line{background:#fff;box-shadow:none;border:1.5px solid #2E7D4F;color:#1F5A38}
+.act.xlc.line:hover{background:#EFF8F2}
+.act.mgc.line em,.act.xlc.line em{color:var(--muted);opacity:1}
+.act.mgc.line:active,.act.xlc.line:active{transform:translateY(1px);box-shadow:none}
+
+/* ↩ 되돌리기는 머리줄 작은 링크로 — 가끔 쓰는 수습 동작이라 큰 버튼에서 뺐습니다 */
+.bulkhead .lnk.undo{margin-left:auto;color:var(--accent-lo);font-weight:700;white-space:nowrap}
+.bulkhead .lnk.undo:hover{text-decoration:underline}

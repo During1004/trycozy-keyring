@@ -160,21 +160,23 @@ function stageBar(role, g, key){
   let btns = "";
   if (key === "un"){
     const mgAble = sel.filter(o => !o.to);
-    btns = `<button class="act s1 sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>⊕ 합치기<em>${
+    btns = `<button class="act mgc sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>⊕ 합치기<em>${
         mgAble.length >= 2 ? mgAble.length + "건을 한 묶음으로" : "매대 2건 이상 골라 주세요"}</em></button>
       <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ 확인<em>${sel.length}건을 확인 칸으로</em></button>`;
   } else {
     const allXl = sel.every(o => o.xl);
-    btns = `<button class="act s2 sm${allXl ? " line" : ""}" id="${ID("bkDl",role,key)}" type="button">${
+    /* ↩ 미확인으로 는 **가끔 쓰는 수습 동작**이라 큰 버튼에서 뺐습니다 (2026-08-24 사용자 지시).
+       한 번 잘못 누르면 여러 건이 통째로 되돌아가서 위험합니다. 머리줄 작은 링크로 내렸습니다. */
+    btns = `<button class="act xlc sm${allXl ? " line" : ""}" id="${ID("bkDl",role,key)}" type="button">${
         allXl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${sel.length}건 · ${files(sel)}${allXl ? " · 받았습니다" : ""}</em></button>
-      <button class="act s2 sm" id="${ID("bkOk",role,key)}" type="button">② 트라이코지로 넘기기<em>${sel.length}건 넘김</em></button>
-      <button class="act ghost sm back" id="${ID("bkUn",role,key)}" type="button">↩ 미확인으로<em>${sel.length}건 되돌림</em></button>`;
+      <button class="act s2 sm" id="${ID("bkOk",role,key)}" type="button">② 트라이코지로 넘기기<em>${sel.length}건 넘김</em></button>`;
   }
   return `<div class="bulkbox ${STAGE[key].tone}">
       <div class="bulkhead">
         <label class="selbox all"><input type="checkbox" id="${ID("selAll",role,key)}"${allOn ? " checked" : ""}><b>전체 선택</b></label>
         <span id="${ID("selCnt",role,key)}">${on.length ? on.length + "건 고름" : "고른 것 없음 — 누르면 이 칸 전체 " + able.length + "건"}</span>
         ${on.length ? `<button type="button" class="lnk" id="${ID("selClear",role,key)}">선택 해제</button>` : ""}
+        ${key === "cf" ? `<button type="button" class="lnk undo" id="${ID("bkUn",role,key)}">↩ ${sel.length}건 미확인으로 되돌리기</button>` : ""}
       </div>
       <div class="btns bulkbtns">${btns}</div>
     </div>`;

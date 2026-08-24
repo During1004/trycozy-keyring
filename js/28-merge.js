@@ -108,15 +108,15 @@ function mergedCard(list, role){
       split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
     ${role === 1 && st === 0 && !dl ? `<div class="btns">
       <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 확인<em>이 묶음 ${list.length}건을 확인 칸으로</em></button>
-      <button class="act s1 sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로 되돌립니다</em></button>
+      <button class="act mgc sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로 되돌립니다</em></button>
     </div>` : ""}
     ${role === 1 && st === 0 && dl ? `<div class="btns">
-      <button class="act s2 sm${xl ? " line" : ""}" data-mgdl="${nos.join(",")}" type="button">${xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>합계·주문별 두 장이 한 파일에${xl ? " · 받았습니다" : ""}</em></button>
+      <button class="act xlc sm${xl ? " line" : ""}" data-mgdl="${nos.join(",")}" type="button">${xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>합계·주문별 두 장이 한 파일에${xl ? " · 받았습니다" : ""}</em></button>
       <button class="act s2 sm" data-mgok="${nos.join(",")}" type="button">② 트라이코지로 넘기기<em>${list.length}건 한 번에</em></button>
     </div>
     <div class="btns">
       <button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 미확인으로 되돌리기<em>주문 내용은 그대로입니다</em></button>
-      <button class="act ghost sm" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로</em></button>
+      <button class="act mgc sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로</em></button>
     </div>` : ""}
   </article>`;
 }

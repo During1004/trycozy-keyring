@@ -177,7 +177,7 @@ function orderCard(o, role){
         <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 확인<em>확인 칸으로 보냅니다</em></button>
       </div>` : ""}
       ${role===1 && o.status===0 && o.dl ? `<div class="btns">
-        <button class="act s2 sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${o.mode} 양식${o.xl ? " · 받았습니다" : ""}</em></button>
+        <button class="act xlc sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${o.mode} 양식${o.xl ? " · 받았습니다" : ""}</em></button>
         <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기<em>넘기면 발송으로 갑니다</em></button>
       </div>
       <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 미확인으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}
