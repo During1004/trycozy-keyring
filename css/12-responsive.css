@@ -151,3 +151,53 @@ td.n{font-family:var(--mono);font-weight:700;text-align:right;white-space:nowrap
   .send{flex:none;padding:14px 18px}
   .tally strong{font-size:16px}
 }
+
+/* ══════════════════════════════════════════════════════════════
+   목록형 보기 (2026-08-24 전자랜드 요청) — 기본 보기 방식입니다.
+   사진을 작게 줄이고 한 줄에 한 상품. 바코드로 훑어 내려가기 좋습니다.
+   ⚠ 이 블록은 반드시 이 파일 맨 끝에 둡니다 — 위 반응형 열 개수를 덮어야 합니다.
+   ⚠ 사진을 눌러 수량이 오르면 안 됩니다 (규칙). 여기서도 −/입력/+ 뿐입니다.
+   ══════════════════════════════════════════════════════════════ */
+body.viewlist .grid{grid-template-columns:minmax(0,1fr);gap:6px}
+body.viewlist .cap{display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:10px;align-items:center;
+  padding:7px 10px;border-radius:6px}
+body.viewlist .cap::before{display:none}
+body.viewlist .cap-face{aspect-ratio:1;border-radius:5px;border:1px solid var(--line)}
+/* ⚠ minmax(0,…) 없이 1fr 만 쓰면 긴 상품명이 칸을 밀어내 + 버튼이 화면 밖으로 잘립니다 */
+body.viewlist .cap-body{padding:0;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px}
+body.viewlist .cap-name{grid-column:1;grid-row:1;min-height:0;min-width:0;font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+body.viewlist .cap-sub{display:none}
+/* ⚠ overflow:hidden 을 쓰면 가격이 "12,9" 처럼 잘립니다. 좁으면 줄바꿈시킵니다 */
+body.viewlist .cap-meta{grid-column:1;grid-row:2;min-width:0;margin-top:2px;justify-content:flex-start;
+  gap:3px 9px;flex-wrap:wrap;overflow:visible}
+body.viewlist .cap-code{font-size:10px;letter-spacing:0}
+body.viewlist .cap-price{font-size:11px}
+body.viewlist .step{grid-column:2;grid-row:1 / span 2;margin-top:0;width:clamp(126px,34vw,172px)}
+body.viewlist .step button{width:34px;font-size:18px}
+body.viewlist .step input{font-size:16px;padding:6px 2px}
+body.viewlist .legend{top:3px;right:3px;min-width:20px;height:20px;font-size:11px;padding:0 4px}
+body.viewlist .nodb{left:3px;top:3px;font-size:7px;padding:2px 3px}
+@media (max-width:559px){
+  body.viewlist .cap-code{font-size:9.5px}
+  body.viewlist .cap-price{font-size:10.5px}
+}
+@media (max-width:379px){
+  body.viewlist .cap{grid-template-columns:44px minmax(0,1fr);column-gap:8px;padding:6px 8px}
+  body.viewlist .cap-name{font-size:12px}
+  body.viewlist .step{width:clamp(116px,36vw,140px)}
+  body.viewlist .step button{width:30px}
+}
+/* ★ PC 도 완전한 1자 목록 (2026-08-24 사용자 지시)
+   폭이 넓다고 2·3열로 쪼개면 눈이 좌우로 왔다갔다 합니다.
+   **어느 폭에서든 한 줄에 한 상품** — 바코드를 위에서 아래로 훑기 좋게.
+   대신 PC 에서는 이름·바코드·수량을 **한 줄 안에** 나란히 놓아 빈자리를 없앱니다. */
+@media (min-width:1024px){
+  body.viewlist .grid{grid-template-columns:1fr;gap:6px}
+  body.viewlist .cap{grid-template-columns:46px minmax(0,1fr);padding:6px 12px}
+  body.viewlist .cap-body{grid-template-columns:minmax(0,1fr) auto auto;column-gap:20px}
+  body.viewlist .cap-name{grid-row:1;grid-column:1;font-size:13.5px}
+  body.viewlist .cap-meta{grid-row:1;grid-column:2;margin-top:0;flex-wrap:nowrap;gap:14px}
+  body.viewlist .cap-code{font-size:11px}
+  body.viewlist .cap-price{font-size:12.5px}
+  body.viewlist .step{grid-row:1;grid-column:3;width:186px}
+}

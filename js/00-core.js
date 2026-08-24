@@ -18,6 +18,7 @@ export const S = {
                       // ★ 매대로 시작합니다 — 매대 보충이 매일 도는 일이라 기본값입니다
   FILTER: "",         // 목록 필터 "" | "__picked" | 시리즈명
   FIND: "",           // 찾기 입력값
+  BULK: null,         // OR 일괄검색 결과 (담긴 것들의 번호 Set). null 이면 안 쓰는 중
   draftReady: false,  // 작성 중 주문 자동보관 준비됨
   scanBuf: "",        // 바코드 리더가 흘려보낸 글자 버퍼
   physKeys: false,    // 물리 키보드(스캐너) 입력이 확인됨
@@ -25,6 +26,7 @@ export const S = {
   LAST: null,         // 방금 보낸 주문 (되돌리기 대상)
   SHIPIMG: null,      // 출고 송장 캡처 (dataURL)
   SUB: "order",       // 전자랜드 화면 안 — "order" | "mine"
+  SUB1: "work",       // 더다움 화면 안 — "work"(처리할 것) | "hist"(주문 내역)
 };
 
 /* 파일끼리 부르는 창구 */

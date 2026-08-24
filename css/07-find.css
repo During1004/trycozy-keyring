@@ -46,3 +46,22 @@ body.shipmode .findrow .chip.pick[aria-pressed="true"]{background:var(--cyan);bo
 .grp span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted)}
 .grp[hidden]{display:none!important}
 
+
+/* ── OR 일괄검색 (2026-08-24 전자랜드 요청) ────────────────────
+   ⚠ 회색 버튼 금지 규칙 — 파란 테두리로 "누를 수 있는 것"임을 분명히 합니다. */
+.bulkbtn{flex:none;font-family:var(--sans);font-size:12px;font-weight:700;white-space:nowrap;
+  color:var(--blue);background:#fff;border:1px solid var(--blue);border-radius:20px;
+  padding:7px 11px;cursor:pointer;outline:0}
+.bulkbtn:hover{background:var(--blue);color:#fff}
+.bulkbtn:active{transform:translateY(1px)}
+.findrow .chip.bulk{background:#fff;border-color:var(--blue);color:var(--blue)}
+.findrow .chip.bulk[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media (max-width:379px){ .bulkbtn{padding:7px 8px;font-size:11px} }
+/* PC — 자리가 넉넉하니 꽉 채워 눈에 띄게 (2026-08-24 사용자 지시).
+   ⌕ 돋보기 버튼은 PC 에서 숨기므로 이 버튼이 그 자리를 대신합니다. */
+@media (min-width:1024px){
+  .bulkbtn{background:var(--blue);border-color:var(--blue);color:#fff;
+    padding:8px 18px;font-size:13px;box-shadow:0 2px 0 var(--blue-lo)}
+  .bulkbtn:hover{background:var(--blue-lo)}
+  .bulkbtn:active{transform:translateY(2px);box-shadow:none}
+}

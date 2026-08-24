@@ -16,7 +16,8 @@ const SET_KEY = "trycozy.keyring.settings.v1";
 const SETTINGS = {
   step:     { A: 10, B: 1 },   // ＋/－ 한 번에 오르내리는 수량 (개인 배송은 1 고정)
   scanMode: { A: "qty", B: "one" },
-  dens:     null,              // null = 화면 크기에 따라 자동
+  view:     "list",            // 보기 방식 list(목록형·기본) | compact(촘촘히) | photo(사진 크게)
+  dens:     null,              // (옛 값) 촘촘 여부. view 로 대체됨
   sort:     "db",              // db | name | code
   savedAt:  0,
 };
@@ -28,6 +29,7 @@ function loadSettings(){
       if (o.scanMode) Object.assign(SETTINGS.scanMode, o.scanMode);
       if (o.sort)     SETTINGS.sort = o.sort;
       if (o.dens !== undefined) SETTINGS.dens = o.dens;
+      if (o.view) SETTINGS.view = o.view;
       SETTINGS.savedAt = o.savedAt || 0;
     }
   }catch(e){}

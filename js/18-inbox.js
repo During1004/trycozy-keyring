@@ -11,6 +11,44 @@ const FLOW = ["전자랜드 전송","더다움 확인","트라이코지 승인",
 const flowHtml = st => `<div class="flow">` + FLOW.map((f,i)=>
   `<i class="${i<st?"done":i===st?"now":""}">${f}</i>`).join("") + `</div>`;
 
+/* ══════════════════════════════════════════════════════════════
+   금액 (2026-08-24 더다움 요청)
+   ★ 입고가는 저장소(Supabase `가격` 표)에서만 옵니다. catalog.json 에는 없습니다.
+     전자랜드 계정은 RLS 때문에 빈 값이 와서 금액 칸이 아예 안 생깁니다.
+   ★ 소비자가는 상품 자료(l.p)에 있는 값입니다 — 공개돼도 되는 값입니다.
+   ══════════════════════════════════════════════════════════════ */
+const won = v => (Number(String(v ?? "").replace(/[^0-9]/g, "")) || 0);
+const priceOf = b => (A.PRICE && A.PRICE[b]) || null;
+/* 이 주문에 붙일 금액이 하나라도 있나 — 없으면 칸을 아예 안 만듭니다 */
+function hasPrice(o){
+  return !!(A.PRICE && o.lines.some(l=>{ const p = priceOf(l.b); return p && (p.e != null || p.t != null); }));
+}
+function sums(o){
+  let cons = 0, e = 0, t = 0, eN = 0, tN = 0;
+  o.lines.forEach(l=>{
+    const q = l.q || 0, p = priceOf(l.b);
+    cons += won(l.p) * q;
+    if (p && p.e != null){ e += p.e * q; eN++; }
+    if (p && p.t != null){ t += p.t * q; tN++; }
+  });
+  return { cons, e, t, eN, tN, all: o.lines.length };
+}
+/* 금액 요약 줄 — 더다움·트라이코지 화면에만 (role 1·2) */
+function moneyRow(o, role){
+  if (role === 0 || !hasPrice(o)) return "";
+  const m = sums(o);
+  const part = n => n < m.all ? `<i class="pnote">${m.all - n}종 값 없음</i>` : "";
+  return `<div class="mny">
+      <span class="eyebrow">금액</span>
+      <div class="mny-g">
+        <b><em>소비자가</em>${A.money(m.cons)}</b>
+        ${m.eN ? `<b class="me"><em>전자랜드 입고가</em>${A.money(m.e)}${part(m.eN)}</b>` : ""}
+        ${m.tN ? `<b class="mt"><em>트라이코지 입고가</em>${A.money(m.t)}${part(m.tN)}</b>` : ""}
+        ${m.eN && m.tN ? `<b class="mg"><em>더다움 남는 것</em>${A.money(m.e - m.t)}</b>` : ""}
+      </div>
+    </div>`;
+}
+
 function renderInbox(role){
   const box = $("v"+role);
   /* ⚠ 더다움은 넘긴 뒤에도 계속 봅니다. v30 초반에는 status<=1 만 걸러서
@@ -73,7 +111,8 @@ function orderCard(o, role){
       ${o.reject ? `<p class="warn"><b>트라이코지 반려</b> — ${esc(o.reject)}</p>` : ""}
       ${o.to ? `<div class="ship-to top"><span class="eyebrow">받는 분</span><b>${esc(o.to.name)}</b> · ${esc(o.to.tel)}<br>${o.to.zip ? `[${esc(o.to.zip)}] ` : ""}${esc(o.to.addr)}${o.to.addr2 ? " " + esc(o.to.addr2) : ""}${o.to.memo?"<br>요청: "+esc(o.to.memo):""}</div>` : ""}
       <div class="xlwrap"><table class="xltab">
-        <thead><tr><th>25자</th><th>영문 코드10자이내</th><th>바코드</th><th>이미지</th><th>상품명</th><th>기종</th><th>디자인</th><th>발주수량</th><th>샘플 지원</th></tr></thead>
+        <thead><tr><th>25자</th><th>영문 코드10자이내</th><th>바코드</th><th>이미지</th><th>상품명</th><th>기종</th><th>디자인</th><th>발주수량</th><th>샘플 지원</th>${
+          role !== 0 && hasPrice(o) ? `<th class="pth">전자랜드<br>입고가</th><th class="pth">트라이코지<br>입고가</th>` : ""}</tr></thead>
         <tbody>${o.lines.map(l=>`<tr>
           <td class="c25">${esc(l.s || "")}</td>
           <td class="ccode">${esc(l.c || "")}</td>
@@ -83,8 +122,14 @@ function orderCard(o, role){
           <td class="cmod">${esc(l.m || "")}</td>
           <td class="cdes">${esc(l.d || "")}</td>
           <td class="cqty">${l.q}</td>
-          <td class="csmp"></td></tr>`).join("")}</tbody>
+          <td class="csmp"></td>${(()=>{
+            if (role === 0 || !hasPrice(o)) return "";
+            const p = priceOf(l.b) || {};
+            return `<td class="cp">${p.e != null ? A.money(p.e) : "<i>—</i>"}</td>`
+                 + `<td class="cp">${p.t != null ? A.money(p.t) : "<i>—</i>"}</td>`;
+          })()}</tr>`).join("")}</tbody>
       </table></div>
+      ${moneyRow(o, role)}
       <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
       ${role===1 && o.status===0 ? `<div class="btns">
         <button class="act form sm" data-form="${o.no}" data-mark="1">① 주문 엑셀 받기<em>${o.mode} 양식${o.dl ? " · 받음 ✓" : ""}</em></button>

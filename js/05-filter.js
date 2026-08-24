@@ -55,6 +55,7 @@ function applyFilter(){
       const i = +c.dataset.i;
       const it = A.ITEMS[i];
       const byFilter = S.FILTER === "__picked" ? (q[i] || 0) > 0
+                     : S.FILTER === "__bulk"   ? !!(S.BULK && S.BULK.has(i))
                      : (!S.FILTER || it.g === S.FILTER);
       const show = byFilter && matchFind(it);
       c.hidden = !show;
@@ -69,14 +70,16 @@ function applyFilter(){
         if (el.classList.contains("cap") && !el.hidden){ any = true; break; }
         el = el.nextElementSibling;
       }
-      hd.hidden = !any || S.FILTER === "__picked";   // 담은 것만 볼 땐 머리 없이 목록만
+      hd.hidden = !any || S.FILTER === "__picked" || S.FILTER === "__bulk";   // 담은 것·일괄검색은 머리 없이 목록만
     });
   });
   $("count").textContent = n + " 품목";
   const all = document.querySelector("[data-alln]");
   if (all) all.textContent = A.ITEMS.length;
   $("listTitle").textContent = (A.isShip() ? "개인 배송" : "매대 보충")
-    + (S.FIND ? ` · "${$("find").value.trim()}" 검색` : (S.FILTER && S.FILTER !== "__picked") ? ` · ${S.FILTER}` : "");
+    + (S.FIND ? ` · "${$("find").value.trim()}" 검색`
+      : S.FILTER === "__bulk"   ? ` · 일괄검색 ${S.BULK ? S.BULK.size : 0}종`
+      : (S.FILTER && S.FILTER !== "__picked") ? ` · ${S.FILTER}` : "");
 }
 /* 담은 것 칩의 숫자 갱신 + 목록 즉시 반영
    ★ 숫자 칸에 타이핑 중일 때는 다시 걸러내지 않는다.

@@ -23,17 +23,20 @@ function setRole(r){
   if (AS !== null) r = AS;                 // 업체 화면으로 고정 — 탭으로 못 넘어간다
   document.querySelectorAll(".chain button").forEach(b=>b.setAttribute("aria-pressed", String(+b.dataset.role===r)));
   [1,2].forEach(i=> $("v"+i).hidden = (i!==r));
-  $("subtabs").hidden = (r!==0);
+  $("subtabs").hidden  = (r!==0);
+  $("subtabs1").hidden = (r!==1);          /* 더다움 — 처리할 것 / 주문 내역 */
+  if (r !== 1) $("v1b").hidden = true;
   if (r === 0) A.setSub(S.SUB);
   else {
     $("v0").hidden = true; $("v0b").hidden = true; $("bar").hidden = true;
     document.body.style.paddingBottom = A.mqPC.matches ? "24px" : "40px";
     A.renderInbox(r);
+    if (r === 1) A.setSub1(S.SUB1);        /* 27-history.js */
   }
   window.scrollTo({top:0});
 }
 document.querySelectorAll(".chain button").forEach(b=> b.onclick = ()=>setRole(+b.dataset.role));
-A.setDens(A.SETTINGS.dens === null ? !A.mqPC.matches : A.SETTINGS.dens);
+A.setView(A.SETTINGS.view || "list");   /* 기본 목록형 (2026-08-24) */
 A.syncStick();
 A.relayout();
 A.loadDraft();

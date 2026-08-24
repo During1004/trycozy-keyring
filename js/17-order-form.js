@@ -67,6 +67,39 @@ const formImgs = o => o.lines.map(lineImg);
       여러 건이 한 시트에 섞이므로 어느 주문인지 표시가 없으면 못 갈라냅니다. */
 const BULK_HDR_A = ["주문번호", ...FORM_HDR_A];
 const BULK_W_A   = [18, ...FORM_W_A];
+
+/* ══════════════════════════════════════════════════════════════
+   ★ 매대건 합치기 (2026-08-24 더다움 요청)
+   "합본인데 주문별로 줄이 따로 나와서, 같은 상품을 손으로 더해야 한다"
+   → **바코드 기준으로 묶어 수량을 더한 시트**를 첫 장으로 만듭니다.
+     어느 주문에서 왔는지는 뒤 두 칸(주문 건수 · 주문번호)에 남겨 두어
+     나중에 되짚을 수 있게 합니다. 원본은 둘째 시트 `주문별` 에 그대로 있습니다.
+   ⚠ 앞 9칸은 전자랜드 양식 그대로입니다 — 그대로 생산팀에 넘길 수 있습니다.
+   ⚠ 고객건은 합치지 않습니다. 받는 분이 사람마다 달라 섞으면 안 됩니다.
+   ══════════════════════════════════════════════════════════════ */
+const MERGE_HDR_A = [...FORM_HDR_A, "주문 건수", "주문번호"];
+const MERGE_W_A   = [...FORM_W_A, 11, 34];
+function mergeDisp(list){
+  const m = new Map();
+  list.forEach(o => {
+    const no = orderNoFull(o);
+    o.lines.forEach(l => {
+      const k = l.b || ((l.c || "") + "|" + (l.n || "") + "|" + (l.d || ""));
+      let r = m.get(k);
+      if (!r){ r = { l, q: 0, nos: [] }; m.set(k, r); }
+      r.q += (l.q || 0);
+      if (!r.nos.includes(no)) r.nos.push(no);
+    });
+  });
+  const arr = [...m.values()];
+  return {
+    rows: arr.map(r => [r.l.s || "", r.l.c || "", r.l.b, "", r.l.n || "", r.l.m || "",
+                        r.l.d || "", r.q, "", r.nos.length, r.nos.join(", ")]),
+    imgs: arr.map(r => lineImg(r.l)),
+    kinds: arr.length,
+    total: arr.reduce((s, r) => s + r.q, 0),
+  };
+}
 /* ★ 합본은 **매대건 / 고객건 파일을 따로** 만듭니다 (2026-08-21 사용자 확정).
      한 파일에 시트로 담던 방식은 트라이코지 단계(파일 2개)와 어긋나 헷갈렸습니다.
      이제 더다움도 트라이코지와 **똑같이** 움직입니다.
@@ -83,11 +116,16 @@ function dlBulkForm(list, btn, mine){
   _ymd0 = ymd(list[0]);
   const disp = list.filter(o=>!o.to), ship = list.filter(o=>o.to);
   return A.run(btn, "받음 ✓", async () => {
-    /* ① 매대건 */
+    /* ① 매대건 — 첫 장은 합친 것, 둘째 장은 주문별 원본 */
     if (disp.length){
+      const mg = mergeDisp(disp);
       const blob = await A.XLSXW.build([{
-        sheetName:"매대보충",
-        title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 전자랜드 매대 보충 ${disp.length}건`,
+        sheetName:"매대합계",
+        title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 전자랜드 매대 보충 — 주문 ${disp.length}건을 합쳐 ${mg.kinds}종 ${mg.total}개`,
+        headers:MERGE_HDR_A, widths:MERGE_W_A, numCols:[7,9], textCols:[2,10],
+        imgCol:3, imgs: mg.imgs, rows: mg.rows },{
+        sheetName:"주문별", tab:false,
+        title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 주문별 원본 ${disp.length}건 — 합계가 맞는지 되짚을 때 보세요`,
         headers:BULK_HDR_A, widths:BULK_W_A, numCols:[8], textCols:[0,3],
         imgCol:4, imgs: disp.flatMap(formImgs),
         rows: disp.flatMap(o=>o.lines.map(l=>[orderNoFull(o), l.s||"", l.c||"", l.b, "",
@@ -147,4 +185,5 @@ function dlOrderForm(o, btn, mark){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { BULK_HDR_A, BULK_W_A, FORM_HDR_B, FORM_W_B, dlBulkForm, dlOrderForm, formImgs, formRows, lineImg, orderNoFull, ymd });
+Object.assign(A, { BULK_HDR_A, BULK_W_A, FORM_HDR_B, FORM_W_B, MERGE_HDR_A, MERGE_W_A,
+                   dlBulkForm, dlOrderForm, formImgs, formRows, lineImg, mergeDisp, orderNoFull, ymd });

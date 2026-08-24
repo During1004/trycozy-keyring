@@ -5,17 +5,25 @@
 import { $, S, A } from "./00-core.js";
 /* ── 화면 폭에 따라 받는 분 칸 / 전송바 위치 이동 ─────────────
    폰: 상품 아래(v7 확정 배치) · PC: 우측 조작 패널 안 */
-/* ── 밀도 토글 (사진 크게 ↔ 촘촘히) ─────────────────────────
-   폰은 기본 촘촘, PC 는 기본 크게. 선택은 브라우저에 기억된다. */
-function setDens(on){
-  document.body.classList.toggle("compact", on);
-  const b = $("dens");
-  b.setAttribute("aria-pressed", String(on));
-  b.textContent = on ? "크게 보기" : "촘촘히";
-  A.SETTINGS.dens = on; A.saveSettings();
+/* ── 보기 방식 (목록형 / 촘촘히 / 사진 크게) ─────────────────
+   2026-08-24 전자랜드 요청으로 "목록형" 추가. 기본값이 목록형입니다.
+     list    사진 작게 · 한 줄에 한 상품   ← 기본
+     compact 사진 낮게 · 여러 열
+     photo   사진 크게 · 여러 열
+   선택은 브라우저에 기억됩니다. */
+const VIEWS = ["list","compact","photo"];
+function setView(v){
+  if (!VIEWS.includes(v)) v = "list";
+  document.body.classList.toggle("viewlist", v === "list");
+  document.body.classList.toggle("compact",  v === "compact");
+  const sel = $("viewSel");
+  if (sel) sel.value = v;
+  A.SETTINGS.view = v; A.saveSettings();
   if (typeof S.PAGE !== "undefined") A.refresh();
 }
-$("dens").onclick = ()=> setDens(!document.body.classList.contains("compact"));
+if ($("viewSel")) $("viewSel").onchange = ()=> setView($("viewSel").value);
+/* 옛 이름 — 21-role.js 등에서 부르던 것. 켜면 촘촘히, 끄면 사진 크게 */
+function setDens(on){ setView(on ? "compact" : "photo"); }
 
 /* 상품군 머리가 상단 헤더 바로 아래에 붙도록 실제 높이를 재서 넣는다 */
 function syncStick(){
@@ -37,4 +45,4 @@ mqPC.addEventListener("change", relayout);
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { mqPC, relayout, setDens, syncStick });
+Object.assign(A, { mqPC, relayout, setDens, setView, syncStick });

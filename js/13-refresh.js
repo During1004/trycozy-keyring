@@ -26,7 +26,7 @@ function refresh(){
   const other = S.PAGE === "A" ? "B" : "A";
   const oq = Object.values(A.QTY[other]).reduce((a,b)=>a+b,0);
   const here = A.isShip() ? "개인 배송" : "매대 보충", there = A.isShip() ? "매대 보충" : "개인 배송";
-  const short = document.body.classList.contains("compact") && !A.mqPC.matches;
+  const short = (document.body.classList.contains("compact") || document.body.classList.contains("viewlist")) && !A.mqPC.matches;
   $("pageNote").innerHTML = short
     ? `<b>${here} 전용</b> — ${there}에 담긴 ${oq}개와 따로 관리됩니다.`
     : `<b>${here} 전용 페이지</b> — ${there}과 수량이 따로 관리됩니다. ${there} 쪽에 담긴 수량 ${oq}개는 여기에 섞이지 않습니다.`;

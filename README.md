@@ -3,6 +3,8 @@
 전자랜드가 주문 → 더다움이 확인 → 트라이코지가 승인·출고.
 서버 프로그램 없이 브라우저와 Supabase 만 씁니다.
 
+**운영 주소** https://during1004.github.io/trycozy-keyring/
+
 ---
 
 ## 폴더
@@ -10,11 +12,12 @@
 ```
 index.html            화면 뼈대 · css/js 불러오는 순서
 css/     12개         뒤 파일이 앞을 덮습니다. 12-responsive.css 가 반드시 마지막
-js/      26개         00-core.js 부터 23-store.js 까지, main.js 가 순서를 정합니다
+js/      28개         00-core.js 부터 25-ship-import.js 까지, main.js 가 순서를 정합니다
 data/catalog.json     상품 84종 — 도구가 만듭니다. 손으로 고치지 마세요
 images/  84장         {바코드}.png
 lib/     jszip        브라우저에서 엑셀(zip) 만들기
-.github/workflows/    Supabase keepalive (선택)
+.github/workflows/    Supabase keepalive (사흘에 한 번 깨우기)
+robots.txt            검색엔진 차단 (프로젝트 주소에서는 무시됨 — 아래 참고)
 ```
 
 ## 로컬에서 열기
@@ -51,6 +54,14 @@ export const SUPABASE = {
 - 이 저장소는 공개입니다. **비밀번호와 secret key 를 절대 넣지 마세요**
 - 화면을 숨기는 건 보안이 아닙니다. 세 화면이 한 코드 안에 다 있습니다
 - 실제 권한은 Supabase 의 RLS 가 정합니다
+
+## 검색엔진 차단
+
+`index.html` 의 `<meta name="robots" content="noindex, ...">` 가 **실제로 막는 것**입니다.
+🚨 **그 줄을 지우지 마세요.** 지우면 며칠 안에 구글 검색에 뜹니다.
+
+`robots.txt` 도 있지만 프로젝트 주소(`/trycozy-keyring` 이 붙는 형태)에서는 무시됩니다.
+직접 도메인을 붙이면 그때부터 효력이 생깁니다.
 
 ## 문서
 

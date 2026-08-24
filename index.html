@@ -177,8 +177,10 @@ setTimeout(window.__ready, 8000);          /* 마지막 안전장치 */
       <div class="findrow">
         <button type="button" class="chip" data-g="" aria-pressed="true">전체 <b data-alln>84</b></button>
         <button type="button" class="chip pick" data-g="__picked" aria-pressed="false">담은 것 <b data-pickn>0</b></button>
+        <button type="button" class="chip bulk" data-g="__bulk" id="bulkChip" aria-pressed="false" title="한 번 더 누르면 일괄검색을 지웁니다" hidden>일괄 <b data-bulkn>0</b></button>
         <select id="serSel" aria-label="시리즈 선택"></select>
         <button type="button" class="findbtn" id="findBtn" aria-label="이름·바코드로 찾기" aria-expanded="false">⌕</button>
+        <button type="button" class="bulkbtn" id="bulkBtn" title="바코드를 여러 개 한 번에 붙여넣어 찾기">일괄검색</button>
       </div>
     </div>
     <div class="list-head">
@@ -190,7 +192,11 @@ setTimeout(window.__ready, 8000);          /* 마지막 안전장치 */
           <option value="name">이름순</option>
           <option value="code">바코드순</option>
         </select>
-        <button type="button" class="dens" id="dens" aria-pressed="false" title="사진 크기 전환">촘촘히</button>
+        <select class="sortsel" id="viewSel" aria-label="보기 방식">
+          <option value="list">목록형</option>
+          <option value="compact">촘촘히</option>
+          <option value="photo">사진 크게</option>
+        </select>
       </div>
     </div>
     <div class="grid" id="gridA"></div>
@@ -225,8 +231,12 @@ setTimeout(window.__ready, 8000);          /* 마지막 안전장치 */
 
   <div id="v0b" class="inbox" hidden></div>
 
+  <nav class="subtabs" id="subtabs1" role="group" aria-label="더다움 화면" hidden>
+    <button type="button" data-sub1="work" aria-pressed="true" id="subWork">처리할 것<b>0</b></button>
+    <button type="button" data-sub1="hist" aria-pressed="false" id="subHist">주문 내역<b>0</b></button>
+  </nav>
   <div id="v1" class="inbox" hidden></div>
-
+  <div id="v1b" class="inbox" hidden></div>
   <div id="v2" class="inbox" hidden></div>
 
 </div>

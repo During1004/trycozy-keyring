@@ -17,9 +17,17 @@ function dlStore(list, btn){
   if (!g.length) return;
   const mmdd = g[0].mmdd;
   return A.run(btn, "받음 ✓", async () => {
+    /* ★ 첫 장은 상품별로 합친 것 (2026-08-24) — 생산팀이 손으로 더할 일이 없게.
+       둘째 장 `주문별` 은 원본 그대로라 나중에 되짚을 수 있습니다. */
+    const mg = A.mergeDisp(g);
     A.saveBlob(await A.XLSXW.build([{
-      sheetName:"매장건",
-      title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 전자랜드 매장건 ${g.length}건`,
+      sheetName:"매장건합계",
+      title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 전자랜드 매장건 — 주문 ${g.length}건을 합쳐 ${mg.kinds}종 ${mg.total}개`,
+      headers:A.MERGE_HDR_A, widths:A.MERGE_W_A, numCols:[7,9], textCols:[2,10],
+      imgCol:3, imgs: mg.imgs, rows: mg.rows,
+    },{
+      sheetName:"주문별", tab:false,
+      title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 주문별 원본 ${g.length}건`,
       headers:A.BULK_HDR_A, widths:A.BULK_W_A, numCols:[8], textCols:[0,3],
       imgCol:4, imgs: g.flatMap(A.formImgs),
       rows: g.flatMap(o=>o.lines.map(l=>[A.orderNoFull(o), l.s||"", l.c||"", l.b, "",

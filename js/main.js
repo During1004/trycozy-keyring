@@ -9,6 +9,7 @@ import "./02-qty-state.js";
 import "./03-settings.js";
 import "./04-grid.js";
 import "./05-filter.js";
+import "./26-bulk-find.js";   /* 바코드 여러 개 한 번에 찾기 — 05-filter 뒤라야 합니다 */
 import "./06-qty-edit.js";
 import "./07-cart.js";
 import "./08-layout.js";
@@ -26,6 +27,7 @@ import "./19-ship-approve.js";
 import "./20-mine.js";
 import "./24-bulk.js";        /* 여러 건 한 번에 — 18/19/20 이 등록된 뒤라야 합니다 */
 import "./25-ship-import.js"; /* 송장 엑셀 올리기 */
+import "./27-history.js";     /* 더다움 주문 내역 — 18-inbox 의 orderCard 를 씁니다 */
 import "./21-role.js";        /* ★ 맨 끝 — 이 파일의 마지막 줄이 첫 화면을 그립니다 */
 
 /* 로그인 → 저장소 (선택). config.js 를 비워두면 둘 다 아무 일도 하지 않습니다.

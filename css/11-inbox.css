@@ -149,3 +149,49 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 .act.shipout{background:#2E7D4F;color:#fff;box-shadow:0 3px 0 #1F5A38;font-weight:800}
 .act.shipout::before{content:"✓";display:inline-block;margin-right:7px;font-weight:900}
 .act.shipout:hover{background:#358C59}
+
+/* ── 금액 (2026-08-24 더다움 요청) ─────────────────────────────
+   더다움·트라이코지 화면에만 나옵니다. 전자랜드 계정에는 자료 자체가 안 내려옵니다.
+   ⚠ 회색 금지 규칙 — 값마다 색을 달리해 한눈에 구분되게 합니다. */
+.mny{margin-top:10px;padding:10px 12px;background:#fff;border:1px solid var(--line);
+  border-left:4px solid var(--blue);border-radius:5px}
+.mny .eyebrow{display:block;margin-bottom:7px}
+.mny-g{display:flex;flex-wrap:wrap;gap:8px 18px}
+.mny-g b{display:flex;flex-direction:column;gap:2px;font-family:var(--mono);font-size:15px;
+  font-weight:700;color:var(--ink);white-space:nowrap}
+.mny-g em{font-family:var(--sans);font-size:10.5px;font-weight:700;font-style:normal;
+  letter-spacing:.02em;color:var(--muted)}
+.mny-g b.me{color:var(--blue)}
+.mny-g b.mt{color:var(--cyan)}
+.mny-g b.mg{color:var(--accent)}
+.mny-g b.mg em{color:var(--accent)}
+.pnote{display:block;font-family:var(--sans);font-size:10px;font-style:normal;font-weight:600;color:var(--red)}
+/* 표 안 단가 칸 */
+.xltab th.pth{white-space:nowrap;line-height:1.25;color:var(--blue)}
+.xltab td.cp{font-family:var(--mono);font-weight:700;text-align:right;white-space:nowrap;color:var(--blue)}
+.xltab td.cp i{color:var(--muted);font-style:normal;font-weight:400}
+.xltab th.pth + th.pth, .xltab td.cp + td.cp{color:var(--cyan)}
+@media (max-width:559px){
+  .mny{padding:9px 10px}
+  .mny-g{gap:7px 14px}
+  .mny-g b{font-size:13.5px}
+}
+
+/* ── 더다움 주문 내역 (2026-08-24) ─────────────────────────── */
+.hist-top{padding:14px 16px 0}
+.hist-find input{width:100%;box-sizing:border-box;font-family:var(--sans);font-size:13.5px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:5px;background:#fff;outline:0;-webkit-appearance:none}
+.hist-find input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,107,224,.18)}
+.hist-find input::-webkit-search-cancel-button{display:none}
+.hist-sel{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.hist-sel select{flex:1;min-width:110px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:20px;padding:8px 10px;cursor:pointer;outline:0}
+.hist-sel select:focus{border-color:var(--blue)}
+.hist-clear{flex:none;font-family:var(--sans);font-size:12px;font-weight:700;white-space:nowrap;
+  color:var(--red);background:#fff;border:1px solid var(--red);border-radius:20px;padding:8px 12px;cursor:pointer}
+.hist-clear:hover{background:var(--red);color:#fff}
+.hist-count{margin:9px 2px 0;font-size:12.5px;color:var(--muted)}
+.hist-count b{font-family:var(--mono);font-size:14px;color:var(--ink)}
+.hist-keep{margin:8px 16px 0;padding:9px 11px;font-size:12px;line-height:1.5;color:var(--ink);
+  background:#fff;border:1px dashed var(--line);border-left:4px solid var(--accent);border-radius:5px}
+@media (min-width:1024px){ .hist-top,.hist-keep{padding-left:0;padding-right:0;margin-left:0;margin-right:0} }

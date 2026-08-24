@@ -30,6 +30,7 @@ const slog = (...a) => { if (STORE.debug) console.log("[저장소]", ...a); };
 /* ── 표 이름 ─────────────────────────────────────────────
    05_저장소_SUPABASE\sql\01_스키마.sql 과 글자가 같아야 합니다. */
 const T_ORDER = "주문";
+const T_PRICE = "가격";      /* 입고가. 전자랜드에게는 RLS 가 한 줄도 안 줍니다 */
 const T_LINE  = "주문줄";
 const RPC_NO  = "새주문번호";
 
@@ -134,6 +135,29 @@ function toOrder(r) {
 }
 
 /* ══════════════════════════════════════════════════════════
+   입고가 읽기 (2026-08-24)
+   ★ 전자랜드 계정으로 부르면 RLS 가 걸러서 **빈 배열**이 옵니다.
+     그래서 전자랜드 화면에는 금액 칸 자체가 안 생깁니다 — 코드로 숨기는 게
+     아니라 자료가 아예 안 내려옵니다.
+   ★ 표가 아직 없거나(08_가격.sql 미실행) 값이 비어 있어도 조용히 넘어갑니다.
+   ══════════════════════════════════════════════════════════ */
+async function pullPrice() {
+  try {
+    const rows = await rest(encodeURIComponent(T_PRICE) + "?select=*&limit=2000");
+    const m = {};
+    (rows || []).forEach(r => {
+      if (!r["바코드"]) return;
+      m[String(r["바코드"])] = { e: r["전자랜드입고가"], t: r["트라이코지입고가"] };
+    });
+    A.PRICE = m;
+    slog("입고가", Object.keys(m).length, "종");
+  } catch (e) {
+    A.PRICE = {};                 // 표가 없거나 권한이 없으면 그냥 안 보여 줍니다
+    slog("입고가 없음", e && e.message);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
    읽기 — 주문 + 주문줄을 한 번에
    ══════════════════════════════════════════════════════════ */
 async function pull() {
@@ -161,6 +185,7 @@ function repaint() {
     A.renderInbox(1);
     A.renderInbox(2);
     A.renderMine();
+    A.renderHistory && A.renderHistory();
   } catch (e) { console.error("[저장소] 다시 그리기 실패", e); }
 }
 
@@ -255,6 +280,7 @@ async function boot() {
     A.setRole(r);
   }
 
+  await pullPrice();                     /* 주문보다 먼저 — 카드를 그릴 때 금액이 있어야 합니다 */
   await pull();
   if (STORE.poll > 0) timer = setInterval(pull, STORE.poll);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) pull(); });
@@ -268,4 +294,4 @@ if (STORE_ON) {
 }
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { storeOn: STORE_ON });
+Object.assign(A, { storeOn: STORE_ON, pullPrice });
