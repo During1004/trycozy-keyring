@@ -49,6 +49,26 @@ function moneyRow(o, role){
     </div>`;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   대시보드 3칸 (2026-08-24 사용자 그림) — 더다움 화면 맨 위
+   [① 미확인 N] [② 확인 N] [③ 발송 N] 을 옆으로 나란히.
+   누르면 그 구획만 봅니다. 한 번 더 누르면 전부 봅니다.
+   ⚠ 숫자는 지금 보고 있는 갈래(매대/고객) 기준입니다 — 아래 구획 건수와 같아야 하니까요.
+   ══════════════════════════════════════════════════════════════ */
+const SEC1 = [
+  [o => o.status === 0 && !o.dl, "① 미확인", "주문서 엑셀을 아직 안 받았습니다", "엑셀 받기부터", "d1"],
+  [o => o.status === 0 &&  o.dl, "② 확인",   "엑셀 받음 · 넘기기만 하면 됩니다", "넘기면 끝",     "d2"],
+  [o => o.status >= 1,           "③ 발송",   "트라이코지로 넘어갔습니다",       "손댈 것 없음",   "d3"],
+];
+function dashHtml(role, list){
+  if (role !== 1) return "";
+  return `<div class="dash">` + SEC1.map(([pred,label,,hint,cls],i)=>{
+    const n = list.filter(pred).length;
+    return `<button type="button" class="dcard ${cls}${S.DSEC===i?" on":""}${n?"":" zero"}" data-dsec="${i}"
+      aria-pressed="${S.DSEC===i}"><em>${label}</em><b>${n}</b><i>${n ? hint : "없음"}</i></button>`;
+  }).join("") + `</div>`;
+}
+
 function renderInbox(role){
   const box = $("v"+role);
   /* ⚠ 더다움은 넘긴 뒤에도 계속 봅니다. v30 초반에는 status<=1 만 걸러서
@@ -56,7 +76,7 @@ function renderInbox(role){
   const all  = role===1 ? A.ORDERS.slice() : A.ORDERS.filter(o => o.status>=1);
   const list = A.tabCut(role, all);            /* 보고 있는 갈래만 (24-bulk.js) */
   /* 남은 일 / 다 끝남 을 맨 위에 색으로 (화면 전체 기준) → 갈래 탭 → 일괄 막대 → 카드 */
-  let head = A.stateBanner(role, all) + A.tabBar(role, all);
+  let head = A.stateBanner(role, all) + dashHtml(role, list) + A.tabBar(role, all);
   if (role === 2){
     const warn = [...new Set(list.flatMap(o=>o.lines).filter(l=>l.w).map(l=>l.b))];
     if (warn.length) head += `<p class="warn"><b>기종 미입력 ${warn.length}종</b> — THE_ELECTRONIC_DB.xlsx 에 기종·생산순위·소비자가가 아직 비어 있습니다.<br>${warn.join(" · ")}</p>`;
@@ -85,16 +105,16 @@ function renderInbox(role){
      구획을 갈라 놓는다 — 한 목록에 섞이면 뭘 눌러야 할지 모른다.
      출고 완료는 트라이코지가 누르는 순간 두 화면에 같이 뜹니다(별도 확인 버튼 없음). */
   const G = role===1
-    ? [[o=>o.status===0 && !o.dl, "① 미확인", "주문서 엑셀을 아직 안 받았습니다"],
-       [o=>o.status===0 &&  o.dl, "② 확인",   "엑셀 받음 · 넘기기만 하면 됩니다"],
-       [o=>o.status>=1,           "③ 발송",   "트라이코지로 넘어갔습니다"]]
-    : [[o=>o.status===1, "승인 대기", ""], [o=>o.status===2, "출고 대기", ""], [o=>o.status===3, "출고 완료", ""]];
+    ? SEC1.map(([pred,label,hint],i)=>[pred,label,hint,i])
+    : [[o=>o.status===1, "승인 대기", "", 0], [o=>o.status===2, "출고 대기", "", 1], [o=>o.status===3, "출고 완료", "", 2]];
   /* 체크는 화면 전체 기준으로 봅니다 — 어딘가 하나라도 체크했으면
      구획마다 "체크한 것만" 합칩니다. 구획별로 따로 보면 한쪽은 전체가 합쳐져 헷갈립니다. */
   const anySel = list.some(o => S.SEL.has(o.no));
-  box.innerHTML = head + G.map(([pred,label,hint])=>{   /* head 에 이미 bar 가 들어 있습니다 */
+  box.innerHTML = head + G.map(([pred,label,hint,i])=>{   /* head 에 이미 bar 가 들어 있습니다 */
+    if (role === 1 && S.DSEC !== null && S.DSEC !== i) return "";   /* 대시보드에서 한 칸만 고른 상태 */
     const g = list.filter(pred);
-    if (!g.length) return "";
+    if (!g.length) return role === 1 && S.DSEC === i
+      ? `<p class="empty">${label} 에 해당하는 주문이 없습니다.</p>` : "";
     const sect = `<p class="sect">${label} ${g.length}건${hint ? `<i>${hint}</i>` : ""}</p>`;
     /* 합쳐 보기 — 같은 규칙: 체크한 게 있으면 그것만, 없으면 그 구획의 매대 전체 */
     if (S.MERGE && role === 1){
@@ -175,4 +195,4 @@ function orderCard(o, role){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { STATUS, flowHtml, hasPrice, moneyRow, orderCard, priceOf, renderInbox, sums, won });
+Object.assign(A, { STATUS, dashHtml, flowHtml, hasPrice, moneyRow, orderCard, priceOf, renderInbox, sums, won });

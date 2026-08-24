@@ -106,7 +106,10 @@ function bindMergeToggle(role){
 
 /* ── 합본 카드 버튼 (화면 어디에 있든 한 곳에서 받습니다) ──── */
 const ordersOf = s => String(s || "").split(",").map(n => A.ORDERS.find(o => o.no === n)).filter(Boolean);
+/* 대시보드 3칸 — 누르면 그 구획만, 한 번 더 누르면 전부 */
 document.addEventListener("click", e => {
+  const s = e.target.closest("[data-dsec]");
+  if (s){ const i = +s.dataset.dsec; S.DSEC = (S.DSEC === i) ? null : i; A.renderInbox(1); return; }
   const d = e.target.closest("[data-mgdl]");
   if (d){ A.dlBulkForm(ordersOf(d.dataset.mgdl), d); return; }
   const k = e.target.closest("[data-mgok]");

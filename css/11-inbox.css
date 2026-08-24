@@ -224,3 +224,31 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 .xltab td.cmgn b{color:var(--accent-lo);font-size:12px}
 .xltab th i{font-style:normal;font-weight:600;font-size:9px;color:var(--accent-lo)}
 .xlnote b.hi{color:var(--accent-lo)}
+
+/* ══════════════════════════════════════════════════════════
+   대시보드 3칸 (2026-08-24 사용자 그림) — 더다움 화면 맨 위
+   [① 미확인] [② 확인] [③ 발송] 을 옆으로 나란히. 누르면 그 구획만.
+   ⚠ 회색 금지 — 안 고른 상태도 색 테두리로 또렷하게.
+   ══════════════════════════════════════════════════════════ */
+.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px}
+.dcard{display:block;text-align:left;padding:12px 14px;border-radius:8px;cursor:pointer;
+  background:#fff;border:2px solid var(--line);font-family:var(--sans);outline:0;
+  transition:transform .08s,box-shadow .08s}
+.dcard em{display:block;font-style:normal;font-size:12.5px;font-weight:800;letter-spacing:-.01em}
+.dcard b{display:block;font-family:var(--mono);font-size:26px;font-weight:800;line-height:1.05;margin-top:3px}
+.dcard i{display:block;font-style:normal;font-size:11px;font-weight:600;color:var(--muted);margin-top:3px}
+.dcard:active{transform:translateY(2px)}
+.dcard.d1{border-color:var(--accent)} .dcard.d1 em,.dcard.d1 b{color:var(--accent-lo)}
+.dcard.d2{border-color:var(--blue)}   .dcard.d2 em,.dcard.d2 b{color:var(--blue)}
+.dcard.d3{border-color:var(--cyan)}   .dcard.d3 em,.dcard.d3 b{color:var(--cyan-lo)}
+.dcard.on em,.dcard.on b,.dcard.on i{color:#fff}
+.dcard.d1.on{background:var(--accent)} .dcard.d2.on{background:var(--blue)} .dcard.d3.on{background:var(--cyan)}
+.dcard.zero{opacity:.45}
+.dcard.zero b{color:var(--muted)}
+@media (max-width:479px){
+  .dash{gap:6px}
+  .dcard{padding:9px 8px;border-width:1.5px;border-radius:6px}
+  .dcard em{font-size:11px}
+  .dcard b{font-size:20px}
+  .dcard i{display:none}          /* 폰은 숫자만 — 설명은 아래 구획 제목에 있습니다 */
+}

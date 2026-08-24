@@ -145,7 +145,10 @@ td.n{font-family:var(--mono);font-weight:700;text-align:right;white-space:nowrap
 
 /* PC — 뒤에 선언해 앞의 기본 규칙을 확실히 덮는다 */
 @media (min-width:1024px){
-  .inbox{max-width:1120px;margin:0 auto;padding:18px 0 0}
+  /* ★ 접수함은 화면 전체 폭 (2026-08-24 사용자 지시)
+     1120px 로 묶어두니 넓은 모니터에서 표 9칸이 눌려 보였다.
+     양옆에 조금만 띄우고 나머지는 전부 쓴다 — 한눈에 다 보이게. */
+  .inbox{max-width:none;margin:0;padding:18px 28px 0}
   .bar{position:static;left:auto;right:auto;bottom:auto;border-top:0;background:transparent;padding:14px 0 0}
   .bar-inner{max-width:none;gap:10px}
   .send{flex:none;padding:14px 18px}
