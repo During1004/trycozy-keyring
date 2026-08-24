@@ -20,7 +20,11 @@
 .findrow .chip.pick[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 body.shipmode .findrow .chip.pick{border-color:var(--cyan);color:var(--cyan-lo)}
 body.shipmode .findrow .chip.pick[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:#fff}
-#serSel{flex:1;min-width:0;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);
+/* 시리즈 목록 — 폭을 좁힌다 (2026-08-24 사용자 지시)
+   가로로 쭉 늘어나면 눌렀을 때 목록이 화면 폭만큼 벌어져 부담스럽다.
+   ⚠ 닫힌 칸만 좁아집니다. 눌러서 펼친 목록은 브라우저가 글자 길이에 맞춰 넓혀 줍니다. */
+#serSel{flex:1 1 auto;min-width:0;max-width:230px;
+  font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--ink);text-overflow:ellipsis;
   background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 10px;cursor:pointer;outline:0}
 #serSel:focus{border-color:var(--blue)}
 #serSel.on{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -49,19 +53,27 @@ body.shipmode .findrow .chip.pick[aria-pressed="true"]{background:var(--cyan);bo
 
 /* ── OR 일괄검색 (2026-08-24 전자랜드 요청) ────────────────────
    ⚠ 회색 버튼 금지 규칙 — 파란 테두리로 "누를 수 있는 것"임을 분명히 합니다. */
-.bulkbtn{flex:none;font-family:var(--sans);font-size:12px;font-weight:700;white-space:nowrap;
-  color:var(--blue);background:#fff;border:1px solid var(--blue);border-radius:20px;
-  padding:7px 11px;cursor:pointer;outline:0}
-.bulkbtn:hover{background:var(--blue);color:#fff}
-.bulkbtn:active{transform:translateY(1px)}
+/* OR검색 — 이 줄에서 제일 눈에 띄어야 하는 버튼 (2026-08-24 사용자 지시) */
+.bulkbtn{flex:none;margin-left:auto;font-family:var(--sans);font-size:13px;font-weight:800;white-space:nowrap;
+  color:#fff;background:var(--blue);border:1px solid var(--blue);border-radius:20px;
+  padding:9px 16px;cursor:pointer;outline:0;box-shadow:0 2px 0 var(--blue-lo)}
+.bulkbtn em{font-style:normal;font-weight:600;font-size:11.5px;opacity:.88;margin-left:5px;display:none}
+.bulkbtn:hover{background:var(--blue-lo)}
+.bulkbtn:active{transform:translateY(2px);box-shadow:none}
 .findrow .chip.bulk{background:#fff;border-color:var(--blue);color:var(--blue)}
 .findrow .chip.bulk[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
-@media (max-width:379px){ .bulkbtn{padding:7px 8px;font-size:11px} }
+/* 좁은 폰 — 한 줄에 다 넣으면 시리즈 칸이 70px 로 눌려 글자가 안 보인다.
+   그래서 **시리즈만 아랫줄로** 내린다. 늘 두 줄이므로 시리즈가 늘어나도 높이는 그대로. */
+@media (max-width:430px){
+  .findrow{flex-wrap:wrap}
+  .findbtn{order:3}
+  .bulkbtn{order:4;padding:8px 13px;font-size:12.5px}
+  #serSel{order:5;flex:1 1 100%;max-width:none;margin-top:6px;font-size:12px;padding:8px 12px}
+}
 /* PC — 자리가 넉넉하니 꽉 채워 눈에 띄게 (2026-08-24 사용자 지시).
    ⌕ 돋보기 버튼은 PC 에서 숨기므로 이 버튼이 그 자리를 대신합니다. */
 @media (min-width:1024px){
-  .bulkbtn{background:var(--blue);border-color:var(--blue);color:#fff;
-    padding:8px 18px;font-size:13px;box-shadow:0 2px 0 var(--blue-lo)}
-  .bulkbtn:hover{background:var(--blue-lo)}
-  .bulkbtn:active{transform:translateY(2px);box-shadow:none}
+  .bulkbtn{padding:11px 22px;font-size:14px}
+  .bulkbtn em{display:inline}          /* PC 는 자리가 넉넉하니 무슨 기능인지 같이 적는다 */
+  #serSel{max-width:280px}
 }

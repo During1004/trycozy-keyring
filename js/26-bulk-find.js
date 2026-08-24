@@ -49,7 +49,7 @@ function clearBulk(){
 /* ── 붙여넣기 창 ───────────────────────────────────────────── */
 function openBulk(){
   A.openSheet(`
-    <b class="big">바코드 여러 개로 찾기</b>
+    <b class="big">OR검색 <span class="sub">(바코드 일괄검색)</span></b>
     <p class="sum">엑셀·메모에서 <b>복사해 붙여넣기</b> 하세요. 넣은 것만 목록에 남습니다.</p>
     <textarea id="bulkTa" class="bulkta" rows="7" spellcheck="false"
       placeholder="8809710471634&#10;8809710471641&#10;8809710471658"></textarea>
