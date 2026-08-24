@@ -27,6 +27,7 @@ import "./19-ship-approve.js";
 import "./20-mine.js";
 import "./24-bulk.js";        /* 여러 건 한 번에 — 18/19/20 이 등록된 뒤라야 합니다 */
 import "./25-ship-import.js"; /* 송장 엑셀 올리기 */
+import "./28-merge.js";       /* 더다움 합쳐 보기 — 18-inbox 의 도우미를 씁니다 */
 import "./27-history.js";     /* 더다움 주문 내역 — 18-inbox 의 orderCard 를 씁니다 */
 import "./21-role.js";        /* ★ 맨 끝 — 이 파일의 마지막 줄이 첫 화면을 그립니다 */
 

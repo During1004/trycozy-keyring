@@ -113,6 +113,7 @@ function bulkBar(role, list){
       <label class="selbox all"><input type="checkbox" id="${ID("selAll",role)}"${allOn ? " checked" : ""}><b>전체 선택</b></label>
       <span id="${ID("selCnt",role)}">${isPicked(able) ? pick(able).length + "건 고름" : "고른 것 없음 — 누르면 전체 " + able.length + "건"}</span>
       ${isPicked(able) ? `<button type="button" class="lnk" id="${ID("selClear",role)}">선택 해제</button>` : ""}
+      ${A.mergeToggle ? A.mergeToggle(role) : ""}
     </div>`;
 
   let btns = "";
@@ -158,6 +159,7 @@ function bindBulkBar(role, list){
   go("bkOk",     () => askHandOver(pick(able.filter(o => o.status === 0))));
   go("bkAppr",   () => askApproveMany(pick(able.filter(o => o.status === 1))));
   go("bkShip",   () => askShipMany(pick(able.filter(o => o.status === 2))));
+  if (A.bindMergeToggle) A.bindMergeToggle(role);      /* 합쳐 보기 켜고 끄기 (28-merge.js) */
 }
 /* 세 화면을 같이 다시 그립니다 — 한 곳에서 고르면 다른 화면 숫자도 맞아야 합니다 */
 function redrawAll(){ A.renderInbox(1); A.renderInbox(2); A.renderMine(); }
@@ -243,4 +245,4 @@ function listHtml(list){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { askApproveMany, askShipMany, bindBulkBar, bulkBar, canPick, isTodo, pickSel: pick, selBox, stateBanner, tabBar, tabCut, tabOf });
+Object.assign(A, { askApproveMany, askHandOver, askShipMany, bindBulkBar, bulkBar, canPick, isTodo, pickSel: pick, selBox, stateBanner, tabBar, tabCut, tabOf });

@@ -195,3 +195,32 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 .hist-keep{margin:8px 16px 0;padding:9px 11px;font-size:12px;line-height:1.5;color:var(--ink);
   background:#fff;border:1px dashed var(--line);border-left:4px solid var(--accent);border-radius:5px}
 @media (min-width:1024px){ .hist-top,.hist-keep{padding-left:0;padding-right:0;margin-left:0;margin-right:0} }
+
+/* ══════════════════════════════════════════════════════════
+   합쳐 보기 (2026-08-24) — 매대 주문 여러 건을 한 블럭으로
+   ══════════════════════════════════════════════════════════ */
+/* 구획 이름 옆 한 줄 설명 */
+.sect i{display:block;font-style:normal;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* 켜고 끄는 단추 — 회색 금지. 끈 상태도 테두리로 또렷하게 */
+.mgtog{margin-left:auto;flex:none;font-family:var(--sans);font-size:12px;font-weight:700;white-space:nowrap;
+  color:var(--accent-lo);background:#fff;border:1.5px solid var(--accent);border-radius:20px;
+  padding:6px 14px;cursor:pointer;outline:0}
+.mgtog:hover{background:#FFF0F5}
+.mgtog.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mgtog:active{transform:translateY(1px)}
+
+/* 합본 카드 — 보통 카드와 확실히 달라 보이게 */
+.order.merged{border:2px solid var(--accent);box-shadow:0 4px 0 var(--accent-lo),0 6px 14px rgba(232,68,127,.18)}
+.mchip.mg{background:var(--accent);color:#fff}
+.mgnos{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:8px 0 2px;padding:8px 10px;
+  background:#FFF4F8;border-radius:5px}
+.mgnos .eyebrow{margin-right:4px}
+.mgnos code{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent-lo);
+  background:#fff;border:1px solid #F5C9DA;border-radius:4px;padding:2px 6px}
+/* 여러 주문에 걸쳐 합쳐진 줄은 바탕을 살짝 칠해 눈에 띄게 */
+.xltab tr.mgrow td{background:#FFF6FA}
+.xltab td.cmgn{font-family:var(--mono);font-size:11px;text-align:center;color:var(--muted);white-space:nowrap}
+.xltab td.cmgn b{color:var(--accent-lo);font-size:12px}
+.xltab th i{font-style:normal;font-weight:600;font-size:9px;color:var(--accent-lo)}
+.xlnote b.hi{color:var(--accent-lo)}

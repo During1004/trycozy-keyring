@@ -19,6 +19,7 @@ export const S = {
   FILTER: "",         // 목록 필터 "" | "__picked" | 시리즈명
   FIND: "",           // 찾기 입력값
   BULK: null,         // OR 일괄검색 결과 (담긴 것들의 번호 Set). null 이면 안 쓰는 중
+  MERGE: false,       // 더다움 화면 "합쳐 보기" — 매대 주문 여러 건을 한 블럭으로
   draftReady: false,  // 작성 중 주문 자동보관 준비됨
   scanBuf: "",        // 바코드 리더가 흘려보낸 글자 버퍼
   physKeys: false,    // 물리 키보드(스캐너) 입력이 확인됨

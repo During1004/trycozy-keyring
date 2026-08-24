@@ -2,7 +2,7 @@
    18-inbox.js
    접수함 — 4단계 상태 · 주문 카드
    ────────────────────────────────────────────────────────── */
-import { $, esc, A } from "./00-core.js";
+import { $, S, esc, A } from "./00-core.js";
 /* ══════════════════════════════════════════════════════════════
    접수함 — 4단계 상태
    ══════════════════════════════════════════════════════════════ */
@@ -79,15 +79,34 @@ function renderInbox(role){
       : (role===1?"전자랜드에서 보낸 주문이 여기에 쌓입니다.":"더다움이 확인한 주문이 여기로 넘어옵니다.")}</p>`;
     bindBulk(role, list); return;
   }
-  /* 구획을 갈라 놓는다 — 한 목록에 섞이면 뭘 눌러야 할지 모른다.
+  /* ★ 구획 — 2026-08-24 사용자 지시로 더다움을 세 칸으로 나눔.
+     예전엔 "확인 대기" 한 칸에 엑셀 받은 것과 안 받은 것이 섞여 있어
+     카드마다 배지를 읽어야 알 수 있었다.
+     구획을 갈라 놓는다 — 한 목록에 섞이면 뭘 눌러야 할지 모른다.
      출고 완료는 트라이코지가 누르는 순간 두 화면에 같이 뜹니다(별도 확인 버튼 없음). */
   const G = role===1
-    ? [[[0],"확인 대기"], [[1,2],"트라이코지 진행중"], [[3],"출고 완료"]]
-    : [[[1],"승인 대기"], [[2],"승인 완료 · 출고 전"], [[3],"출고 완료"]];
-  box.innerHTML = head + G.map(([sts,label])=>{
-    const g = list.filter(o=>sts.includes(o.status));
+    ? [[o=>o.status===0 && !o.dl, "① 미확인", "주문서 엑셀을 아직 안 받았습니다"],
+       [o=>o.status===0 &&  o.dl, "② 확인",   "엑셀 받음 · 넘기기만 하면 됩니다"],
+       [o=>o.status>=1,           "③ 발송",   "트라이코지로 넘어갔습니다"]]
+    : [[o=>o.status===1, "승인 대기", ""], [o=>o.status===2, "출고 대기", ""], [o=>o.status===3, "출고 완료", ""]];
+  /* 체크는 화면 전체 기준으로 봅니다 — 어딘가 하나라도 체크했으면
+     구획마다 "체크한 것만" 합칩니다. 구획별로 따로 보면 한쪽은 전체가 합쳐져 헷갈립니다. */
+  const anySel = list.some(o => S.SEL.has(o.no));
+  box.innerHTML = head + G.map(([pred,label,hint])=>{   /* head 에 이미 bar 가 들어 있습니다 */
+    const g = list.filter(pred);
     if (!g.length) return "";
-    return `<p class="sect">${label} ${g.length}건</p>` + g.map(o=>orderCard(o, role)).join("");
+    const sect = `<p class="sect">${label} ${g.length}건${hint ? `<i>${hint}</i>` : ""}</p>`;
+    /* 합쳐 보기 — 같은 규칙: 체크한 게 있으면 그것만, 없으면 그 구획의 매대 전체 */
+    if (S.MERGE && role === 1){
+      const disp = g.filter(o=>!o.to), cust = g.filter(o=>o.to);
+      const mg   = anySel ? disp.filter(o=>S.SEL.has(o.no))  : disp;
+      const rest = anySel ? disp.filter(o=>!S.SEL.has(o.no)) : [];
+      return sect
+        + (mg.length >= 2 ? A.mergedCard(mg, role) : mg.map(o=>orderCard(o, role)).join(""))
+        + rest.map(o=>orderCard(o, role)).join("")
+        + cust.map(o=>orderCard(o, role)).join("");
+    }
+    return sect + g.map(o=>orderCard(o, role)).join("");
   }).join("");
   bindBulk(role, list);
 }
@@ -156,4 +175,4 @@ function orderCard(o, role){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { orderCard, renderInbox });
+Object.assign(A, { STATUS, flowHtml, hasPrice, moneyRow, orderCard, priceOf, renderInbox, sums, won });
