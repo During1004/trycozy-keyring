@@ -87,9 +87,9 @@ function mergedCard(list, role){
     <p class="xlnote">${lines.length} 품목 · 합계 <b>${total}</b> 개${
       split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 있어 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
     ${role === 1 && st === 0 ? `<div class="btns">
-      <button class="act form sm" data-mgdl="${nos.join(",")}" type="button">① 엑셀 합본 받기<em>매대 파일 1개${ready ? " · 받음 ✓" : ""}</em></button>
+      <button class="act form sm" data-mgdl="${nos.join(",")}" type="button">① 엑셀 합본 받기<em>합계·주문별 두 장이 한 파일에${ready ? " · 받음 ✓" : ""}</em></button>
       <button class="act sm" data-mgok="${nos.join(",")}" type="button"${ready ? "" : " disabled"}>② 확인하고 트라이코지로 넘기기<em>${ready ? `${list.length}건 한 번에 넘김` : "먼저 ① 엑셀을 받으세요"}</em></button>
-    </div>` : ""}
+    </div>${got ? `<button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 미확인으로 되돌리기<em>${got}건 · 묶음을 풀고 다시 정리합니다</em></button>` : ""}` : ""}
   </article>`;
 }
 
@@ -113,9 +113,30 @@ document.addEventListener("click", e => {
   const d = e.target.closest("[data-mgdl]");
   if (d){ A.dlBulkForm(ordersOf(d.dataset.mgdl), d); return; }
   const k = e.target.closest("[data-mgok]");
-  if (k && !k.disabled) A.askHandOver(ordersOf(k.dataset.mgok));
+  if (k && !k.disabled){ A.askHandOver(ordersOf(k.dataset.mgok)); return; }
+  const u = e.target.closest("[data-mgun]");
+  if (u){ askUnconfirm(ordersOf(u.dataset.mgun)); return; }
+  const c = e.target.closest("[data-unconf]");
+  if (c){ askUnconfirm(ordersOf(c.dataset.unconf)); }
 });
+
+/* ── ↩ 미확인으로 되돌리기 (2026-08-24 사용자 요청 "백기능") ───
+   `자료받음` 표시만 지웁니다. 주문 내용·주문번호·수량은 손대지 않습니다.
+   되돌리면 ① 미확인 으로 내려가서 묶음을 다시 짤 수 있습니다. */
+function askUnconfirm(list){
+  if (!list.length) return;
+  A.openSheet(`<b class="big">미확인으로 되돌리기</b>
+    <p class="sum"><b>${list.length}</b> 건을 <b>① 미확인</b> 으로 내립니다.</p>
+    ${A.listHtml(list)}
+    <p class="ask">받았던 <b>엑셀 확인 표시가 지워집니다.</b> 다시 묶어서 엑셀을 새로 받으면 됩니다.<br>
+       <b>주문 내용·수량·주문번호는 그대로입니다.</b> 되돌릴까요?</p>`,
+    () => {
+      list.forEach(o => { o.dl = false; A.store?.onPatch(o, { dl:false }); });   /* [저장소 고리] */
+      S.SEL.clear();
+      A.renderInbox(1); A.renderMine();
+    }, "", "되돌리기");
+}
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { bindMergeToggle, mergeLines, mergeToggle, mergedCard });
+Object.assign(A, { askUnconfirm, bindMergeToggle, mergeLines, mergeToggle, mergedCard });

@@ -126,8 +126,10 @@ function bulkBar(role, list){
   if (role === 1){
     const wait = able.filter(o => o.status === 0);
     const ready = pick(wait).length > 0 && pick(wait).every(o => o.dl);
+    const got = pick(wait).filter(o => o.dl);       /* 이미 확인(엑셀 받음) 된 것 */
     btns = `<button class="act form sm" id="${ID("bkDl",role)}" type="button">① 엑셀 합본 받기<em>${cnt(wait, 1)} · ${files(pick(wait))}${ready ? " · 받음 ✓" : ""}</em></button>
-      <button class="act sm" id="${ID("bkOk",role)}" type="button"${ready ? "" : " disabled"}>② 트라이코지로 넘기기<em>${ready ? cnt(wait) + " 넘김" : "먼저 ① 을 받으세요"}</em></button>`;
+      <button class="act sm" id="${ID("bkOk",role)}" type="button"${ready ? "" : " disabled"}>② 트라이코지로 넘기기<em>${ready ? cnt(wait) + " 넘김" : "먼저 ① 을 받으세요"}</em></button>
+      ${got.length ? `<button class="act ghost sm" id="${ID("bkUn",role)}" type="button">↩ 미확인으로 되돌리기<em>${got.length}건 · 다시 정리하려면</em></button>` : ""}`;
   }
   if (role === 2){
     const wait = able.filter(o => o.status === 1);
@@ -157,6 +159,7 @@ function bindBulkBar(role, list){
   go("bkMineDl", b => A.dlBulkForm(pick(able), b, true));
   go("bkDl",     b => A.dlBulkForm(pick(able.filter(o => o.status === 0)), b));
   go("bkOk",     () => askHandOver(pick(able.filter(o => o.status === 0))));
+  go("bkUn",     () => A.askUnconfirm(pick(able.filter(o => o.status === 0 && o.dl))));
   go("bkAppr",   () => askApproveMany(pick(able.filter(o => o.status === 1))));
   go("bkShip",   () => askShipMany(pick(able.filter(o => o.status === 2))));
   if (A.bindMergeToggle) A.bindMergeToggle(role);      /* 합쳐 보기 켜고 끄기 (28-merge.js) */
@@ -245,4 +248,4 @@ function listHtml(list){
 
 
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { askApproveMany, askHandOver, askShipMany, bindBulkBar, bulkBar, canPick, isTodo, pickSel: pick, selBox, stateBanner, tabBar, tabCut, tabOf });
+Object.assign(A, { askApproveMany, askHandOver, askShipMany, bindBulkBar, bulkBar, canPick, isTodo, listHtml, pickSel: pick, selBox, stateBanner, tabBar, tabCut, tabOf });

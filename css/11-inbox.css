@@ -252,3 +252,15 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
   .dcard b{font-size:20px}
   .dcard i{display:none}          /* 폰은 숫자만 — 설명은 아래 구획 제목에 있습니다 */
 }
+
+/* ── 구획 제목을 붙박이로 (2026-08-24) ─────────────────────────
+   카드 하나가 세로 300~800px 이라 스크롤하면 지금 어느 칸인지 놓친다.
+   주문 화면의 상품군 머리(.grp)와 같은 방식 — --stick 은 검은 머리 실제 높이. */
+.sect{position:sticky;top:var(--stick,104px);z-index:6;background:var(--mat);
+  padding:9px 2px 7px;margin:14px 0 4px;border-bottom:1px solid var(--line)}
+.sect i{margin-top:1px}
+
+/* ↩ 미확인으로 되돌리기 — 되돌리는 버튼이라 눈에 띄되 앞서지 않게 */
+.act.ghost.back{margin-top:8px;border-color:var(--accent);color:var(--accent-lo);background:#fff}
+.act.ghost.back:hover{background:#FFF0F5}
+.act.ghost.back em{color:var(--muted)}

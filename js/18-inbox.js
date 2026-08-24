@@ -129,6 +129,10 @@ function renderInbox(role){
     return sect + g.map(o=>orderCard(o, role)).join("");
   }).join("");
   bindBulk(role, list);
+  /* 붙박이 구획 제목이 검은 머리 바로 아래에 오도록 실제 높이를 다시 잽니다.
+     ⚠ 화면(전자랜드/더다움/트라이코지)마다 머리 높이가 다릅니다.
+        한 번만 재두면 43px 틈이 생겨 카드가 그 사이로 비쳐 지나갑니다. */
+  A.syncStick?.();
 }
 function bindBulk(role, list){
   A.bindBulkBar(role, list);                                   /* 24-bulk.js 가 다 합니다 */
@@ -173,7 +177,7 @@ function orderCard(o, role){
       ${role===1 && o.status===0 ? `<div class="btns">
         <button class="act form sm" data-form="${o.no}" data-mark="1">① 주문 엑셀 받기<em>${o.mode} 양식${o.dl ? " · 받음 ✓" : ""}</em></button>
         <button class="act sm" data-ok="${o.no}"${o.dl ? "" : " disabled"}>② 확인하고 트라이코지로 넘기기<em>${o.dl ? "넘길 수 있습니다" : "먼저 ① 엑셀을 받으세요"}</em></button>
-      </div>` : ""}
+      </div>${o.dl ? `<button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 미확인으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}` : ""}
       ${role===1 && o.status>=1 ? `<button class="act ghost" type="button" disabled>${
         o.status===1 ? "트라이코지 승인 대기" : o.status===2 ? "트라이코지 승인 완료 · 출고 전" : "출고 완료"
       }</button>` : ""}
