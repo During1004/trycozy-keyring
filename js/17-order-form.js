@@ -13,7 +13,9 @@ const FORM_HDR_A = ["25자","영문 코드10자이내","바코드","이미지","
 const FORM_W_A   = [46.4,18,18,18,59.1,24,18.8,14.4,12];
 const FORM_HDR_B = ["주문번호", ...FORM_HDR_A, "수령인","전화번호","우편번호","주소","요청사항"];
 const FORM_W_B   = [18, ...FORM_W_A, 14,16,12,55,30];
-/* 구버전 고객발송 모양 — 고객 정보가 오른쪽 J·K·L 옆열에 붙던 방식.
+/* ⚠ 2026-08-31 — 구버전 시트를 뺐습니다(사용자 요청). 아래 OLD_HDR·OLD_W·oldRows() 는 지금 안 씁니다.
+   되살릴 일이 생기면 이 아래 것을 그대로 쓰면 됩니다.
+   구버전 고객발송 모양 — 고객 정보가 오른쪽 J·K·L 옆열에 붙던 방식.
    A~H 는 옛 발주서 그대로(`품명`, 기종 없음), I 는 비고 자리로 비움.
    ⚠ 옛 파일은 J·K·L 에 머리글이 없어 무슨 열인지 알 수 없었고, 주소를 84행 전부에
      드래그 복사해 두는 사고가 있었습니다. 그래서 여기서는 머리글을 넣고
@@ -132,7 +134,7 @@ function dlBulkForm(list, btn, mine){
                                               l.n||"", l.m||"", l.d||"", l.q, ""])) }]);
       A.saveBlob(blob, bulkName(mine, "매대", disp.length));
     }
-    /* ② 고객건 — 익숙한 옛 모양을 두 번째 시트로 같이 넣습니다 */
+    /* ② 고객건 — 시트 한 장. 구버전 시트는 2026-08-31 사용자 요청으로 뺐습니다 */
     if (ship.length){
       if (disp.length) await new Promise(r=>setTimeout(r, 700));   // 브라우저가 두 번째 파일을 막지 않게 잠깐 텀
       const blob = await A.XLSXW.build([{
@@ -140,12 +142,7 @@ function dlBulkForm(list, btn, mine){
         title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 전자랜드 개인 배송 ${ship.length}건`,
         headers:FORM_HDR_B, widths:FORM_W_B, numCols:[8], textCols:[0,3,11,12],
         imgCol:4, imgs: ship.flatMap(formImgs),
-        rows: ship.flatMap(o=>formRows(o)) },{
-        sheetName:"구버전", tab:false,
-        title:`${mmdd.slice(0,2)}/${mmdd.slice(2)} 더다움-전자랜드 고객발송 ${ship.length}건`,
-        headers:OLD_HDR, widths:OLD_W, numCols:[6], textCols:[2,10],
-        imgCol:3, imgs: ship.flatMap(formImgs),
-        rows: ship.flatMap(o=>oldRows(o)) }]);
+        rows: ship.flatMap(o=>formRows(o)) }]);
       A.saveBlob(blob, bulkName(mine, "고객", ship.length));
     }
     if (mine) return;
@@ -172,13 +169,6 @@ function dlOrderForm(o, btn, mark){
       imgCol:   ship ? 4 : 3,
       imgs:     formImgs(o),
     }];
-    if (ship) sheets.push({                       // 익숙한 옛 모양도 같이 (개인 배송만)
-      sheetName: "구버전", tab: false,
-      title: `${mmdd.slice(0,2)}/${mmdd.slice(2)} 더다움-전자랜드 고객발송 · ${orderNoFull(o)}`,
-      headers: OLD_HDR, widths: OLD_W, rows: oldRows(o),
-      numCols: [6], textCols: [2,10],
-      imgCol: 3, imgs: formImgs(o),
-    });
     const blob = await A.XLSXW.build(sheets);
     A.saveBlob(blob, `${ymd(o)}_${stage}_${kindOf(o)}_${seq6(o)}.xlsx`);
     if (mark){ o.xl = true; A.store?.onPatch(o, {xl:true});   /* [저장소 고리] */ setTimeout(()=>A.renderInbox(1), 1000); }   // 엑셀받음 표시만

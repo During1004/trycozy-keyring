@@ -107,7 +107,7 @@ function mergedCard(list, role){
     <p class="xlnote">${lines.length} 품목 · 합계 <b>${total}</b> 개${
       split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
     ${role === 1 && st === 0 && !dl ? `<div class="btns">
-      <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 묶음 ${list.length}건 접수</button>
+      <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 묶음 ${list.length}건 <span class="kw">접수</span></button>
       <button class="act mgc sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기</button>
     </div>` : ""}
     ${role === 1 && st === 0 && dl ? `<div class="btns">

@@ -161,7 +161,7 @@ function stageBar(role, g, key){
   if (key === "un"){
     const mgAble = sel.filter(o => !o.to);
     btns = `<button class="act mgc sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>${mgAble.length >= 2 ? `⊕ ${mgAble.length}건 합치기` : "⊕ 합치기 · 매대 2건 이상"}</button>
-      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ ${sel.length}건 접수</button>`;
+      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ ${sel.length}건 <span class="kw">접수</span></button>`;
   } else {
     const allXl = sel.every(o => o.xl);
     /* ↩ 미확인으로 는 **가끔 쓰는 수습 동작**이라 큰 버튼에서 뺐습니다 (2026-08-24 사용자 지시).

@@ -181,7 +181,7 @@ function orderCard(o, role){
       ${moneyRow(o, role)}
       <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
       ${role===1 && o.status===0 && !o.dl ? `<div class="btns">
-        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 접수</button>
+        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ <span class="kw">접수</span></button>
       </div>` : ""}
       ${role===1 && o.status===0 && o.dl ? `<div class="btns">
         <button class="act xlc sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}</button>
