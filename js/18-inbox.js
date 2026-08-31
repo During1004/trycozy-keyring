@@ -6,8 +6,8 @@ import { $, S, esc, A } from "./00-core.js";
 /* ══════════════════════════════════════════════════════════════
    접수함 — 4단계 상태
    ══════════════════════════════════════════════════════════════ */
-const STATUS = [{label:"확인 대기",cls:"wait"},{label:"확인 완료",cls:"ok"},{label:"승인 완료",cls:"appr"},{label:"출고 완료",cls:"done"}];
-const FLOW = ["전자랜드 전송","더다움 확인","트라이코지 승인","출고"];
+const STATUS = [{label:"접수 대기",cls:"wait"},{label:"접수 완료",cls:"ok"},{label:"승인 완료",cls:"appr"},{label:"출고 완료",cls:"done"}];
+const FLOW = ["전자랜드 전송","더다움 접수","트라이코지 승인","출고"];
 const flowHtml = st => `<div class="flow">` + FLOW.map((f,i)=>
   `<i class="${i<st?"done":i===st?"now":""}">${f}</i>`).join("") + `</div>`;
 
@@ -51,14 +51,17 @@ function moneyRow(o, role){
 
 /* ══════════════════════════════════════════════════════════════
    대시보드 3칸 (2026-08-24 사용자 그림) — 더다움 화면 맨 위
-   [① 미확인 N] [② 확인 N] [③ 발송 N] 을 옆으로 나란히.
+   [① 접수 전 N] [② 넘길 것 N] [③ 넘김 N] 을 옆으로 나란히.
    누르면 그 구획만 봅니다. 한 번 더 누르면 전부 봅니다.
    ⚠ 숫자는 지금 보고 있는 갈래(매대/고객) 기준입니다 — 아래 구획 건수와 같아야 하니까요.
    ══════════════════════════════════════════════════════════════ */
 const SEC1 = [
-  [o => o.status === 0 && !o.dl, "① 미확인", "주문서 엑셀을 아직 안 받았습니다", "엑셀 받기부터", "d1"],
-  [o => o.status === 0 &&  o.dl, "② 확인",   "엑셀 받음 · 넘기기만 하면 됩니다", "넘기면 끝",     "d2"],
-  [o => o.status >= 1,           "③ 발송",   "트라이코지로 넘어갔습니다",       "손댈 것 없음",   "d3"],
+  /* ★ 2026-08-31 — 칸 이름을 "지금 상태" 가 아니라 "내가 할 일" 로 바꿨습니다.
+     옛 문구는 dl 의 뜻이 "엑셀 받음" 이던 시절 그대로여서, ① 이 "엑셀 받기부터" 라고 하는데
+     정작 엑셀 버튼은 ② 에 있었습니다 → 더다움이 다음 단계를 못 찾았습니다. */
+  [o => o.status === 0 && !o.dl, "① 접수 전", "전자랜드가 보낸 주문입니다 · 내용을 보고 ✓ 접수", "눌러서 접수",      "d1"],
+  [o => o.status === 0 &&  o.dl, "② 넘길 것", "접수했습니다 · 엑셀 받고 트라이코지로 넘기세요",   "엑셀 받고 넘기기", "d2"],
+  [o => o.status >= 1,           "③ 넘김",    "트라이코지로 넘어갔습니다",                        "손댈 것 없음",     "d3"],
 ];
 function dashHtml(role, list){
   if (role !== 1) return "";
@@ -96,7 +99,7 @@ function renderInbox(role){
   if (!list.length){
     box.innerHTML = head + `<p class="empty">${A.tabOf(role, all)!=="all"
       ? (A.tabOf(role, all)==="cust" ? "이 화면에 고객 주문이 없습니다." : "이 화면에 매대 주문이 없습니다.")
-      : (role===1?"전자랜드에서 보낸 주문이 여기에 쌓입니다.":"더다움이 확인한 주문이 여기로 넘어옵니다.")}</p>`;
+      : (role===1?"전자랜드에서 보낸 주문이 여기에 쌓입니다.":"더다움이 접수해 넘긴 주문이 여기로 넘어옵니다.")}</p>`;
     bindBulk(role, list); return;
   }
   /* ★ 구획 — 2026-08-24 사용자 지시로 더다움을 세 칸으로 나눔.
@@ -138,14 +141,18 @@ function bindBulk(role, list){
   A.bindShipImport();                                          /* 25-ship-import.js */
 }
 
+/* ★ 2026-08-31 — 배지는 한 장만 답니다.
+   예전엔 `접수 전`(옛 "아직 미확인") 과 `접수 대기`(옛 "확인 대기") 가 나란히 떠서
+   같은 말을 두 번 했습니다. 0단계는 접수 배지만, 1단계부터는 상태 배지만. */
 function orderCard(o, role){
   return `
     <article class="order ${o.mode === "매대 보충" ? "mA" : "mB"}${o.status === 3 ? " shipped" : ""}">
       <div class="order-top">
         <div><h3><span class="mchip">${o.mode}</span>${o.no}${o.to ? " · " + esc(o.to.name) : ""}</h3><p class="meta">전자랜드 · ${o.at}</p></div>
         <span class="badges">
-          ${o.status===0 ? `<span class="badge dl ${o.dl ? "yes" : "no"}">${o.dl ? "확인함" : "아직 미확인"}</span>${o.dl && o.xl ? `<span class="badge xl">엑셀 받음</span>` : ""}` : ""}
-          <span class="badge ${STATUS[o.status].cls}">${STATUS[o.status].label}</span>
+          ${o.status===0
+            ? `<span class="badge dl ${o.dl ? "yes" : "no"}">${o.dl ? "접수함" : "접수 전"}</span>${o.dl && o.xl ? `<span class="badge xl">엑셀 받음</span>` : ""}`
+            : `<span class="badge ${STATUS[o.status].cls}">${STATUS[o.status].label}</span>`}
           ${A.selBox(o, role)}
         </span>
       </div>
@@ -174,13 +181,13 @@ function orderCard(o, role){
       ${moneyRow(o, role)}
       <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
       ${role===1 && o.status===0 && !o.dl ? `<div class="btns">
-        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 확인<em>확인 칸으로 보냅니다</em></button>
+        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 접수<em>② 넘길 것 으로 보냅니다</em></button>
       </div>` : ""}
       ${role===1 && o.status===0 && o.dl ? `<div class="btns">
         <button class="act xlc sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${o.mode} 양식${o.xl ? " · 받았습니다" : ""}</em></button>
-        <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기<em>넘기면 발송으로 갑니다</em></button>
+        <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기<em>넘기면 ③ 넘김 으로 갑니다</em></button>
       </div>
-      <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 미확인으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}
+      <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 접수 전으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}
       ${role===1 && o.status>=1 ? `<button class="act ghost" type="button" disabled>${
         o.status===1 ? "트라이코지 승인 대기" : o.status===2 ? "트라이코지 승인 완료 · 출고 전" : "출고 완료"
       }</button>` : ""}

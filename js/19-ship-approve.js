@@ -83,7 +83,7 @@ function askApprove(o){
 function askReject(o){
   if (!o) return;
   A.openSheet(`<b class="big">${o.no} 더다움에 반려</b>
-    <p class="sum">확인 대기로 되돌립니다.<br>더다움은 자료를 <b>다시 받아야</b> 넘길 수 있습니다.</p>
+    <p class="sum">접수 대기로 되돌립니다.<br>더다움은 자료를 <b>다시 받아야</b> 넘길 수 있습니다.</p>
     <label class="rejwrap"><span>사유</span><input id="rejMemo" placeholder="예) 수량 확인 필요" autocomplete="off"></label>`,
     ()=>{
       o.status = 0; o.dl = false; o.xl = false;

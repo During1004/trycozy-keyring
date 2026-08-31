@@ -51,7 +51,7 @@ function tabBar(role, all){
 /* ── 남은 일 / 다 끝남 을 한눈에 ────────────────────────────
    ★ 색으로 먼저 보이게 합니다. 숫자는 그 다음입니다.
      남았으면 분홍, 다 끝났으면 연한 초록. */
-const WHO = { 0:["출고 전","전자랜드"], 1:["확인 대기","더다움"], 2:["승인·출고 대기","트라이코지"] };
+const WHO = { 0:["출고 전","전자랜드"], 1:["접수 대기","더다움"], 2:["승인·출고 대기","트라이코지"] };
 function stateBanner(role, list){
   if (!list.length) return "";
   const todo = list.filter(o => isTodo(role, o));
@@ -124,7 +124,7 @@ function bulkBar(role, list){
   }
   if (role === 1){
     /* ★ 2026-08-24 — 더다움은 위쪽 통합 막대를 쓰지 않습니다.
-       구획(미확인/확인)마다 그 단계 버튼만 따로 답니다 → stageBar().
+       구획(접수 전/넘길 것)마다 그 단계 버튼만 따로 답니다 → stageBar().
        한 줄에 5개가 몰려 있으면 어느 버튼이 어느 단계 것인지 알 수 없습니다. */
     return "";
   }
@@ -140,12 +140,12 @@ function bulkBar(role, list){
 
 /* ══════════════════════════════════════════════════════════════
    구획 전용 막대 (2026-08-24) — 더다움
-   `① 미확인` 위에는 미확인 버튼만, `② 확인` 위에는 확인 버튼만.
+   `① 접수 전` 위에는 접수 버튼만, `② 넘길 것` 위에는 넘기기 버튼만.
    체크칸도 그 구획 것만 켜고 끕니다.
    ══════════════════════════════════════════════════════════════ */
 const STAGE = {
-  un: { key:"un", tone:"s1", name:"미확인" },
-  cf: { key:"cf", tone:"s2", name:"확인" },
+  un: { key:"un", tone:"s1", name:"접수 전" },
+  cf: { key:"cf", tone:"s2", name:"넘길 것" },
 };
 function stageBar(role, g, key){
   const able = g.filter(o => canPick(o, role));
@@ -162,7 +162,7 @@ function stageBar(role, g, key){
     const mgAble = sel.filter(o => !o.to);
     btns = `<button class="act mgc sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>⊕ 합치기<em>${
         mgAble.length >= 2 ? mgAble.length + "건을 한 묶음으로" : "매대 2건 이상 골라 주세요"}</em></button>
-      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ 확인<em>${sel.length}건을 확인 칸으로</em></button>`;
+      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ 접수<em>${sel.length}건을 ② 넘길 것 으로</em></button>`;
   } else {
     const allXl = sel.every(o => o.xl);
     /* ↩ 미확인으로 는 **가끔 쓰는 수습 동작**이라 큰 버튼에서 뺐습니다 (2026-08-24 사용자 지시).
@@ -176,7 +176,7 @@ function stageBar(role, g, key){
         <label class="selbox all"><input type="checkbox" id="${ID("selAll",role,key)}"${allOn ? " checked" : ""}><b>전체 선택</b></label>
         <span id="${ID("selCnt",role,key)}">${on.length ? on.length + "건 고름" : "고른 것 없음 — 누르면 이 칸 전체 " + able.length + "건"}</span>
         ${on.length ? `<button type="button" class="lnk" id="${ID("selClear",role,key)}">선택 해제</button>` : ""}
-        ${key === "cf" ? `<button type="button" class="lnk undo" id="${ID("bkUn",role,key)}">↩ ${sel.length}건 미확인으로 되돌리기</button>` : ""}
+        ${key === "cf" ? `<button type="button" class="lnk undo" id="${ID("bkUn",role,key)}">↩ ${sel.length}건 접수 전으로 되돌리기</button>` : ""}
       </div>
       <div class="btns bulkbtns">${btns}</div>
     </div>`;
@@ -240,14 +240,22 @@ document.addEventListener("change", e => {
 /* ── ② 트라이코지로 넘기기 ────────────────────────────────── */
 function askHandOver(list){
   if (!list.length) return;
+  /* ★ 2026-08-24 — 엑셀 게이트를 되살리지 않고 **알려만 줍니다** (사용자 결정).
+     `✓ 확인` 이 이미 "봤다" 는 게이트라 게이트를 두 겹으로 두면 답답합니다.
+     다만 기록(엑셀) 없이 넘어가면 나중에 되짚기 어려우니 한 줄 띄웁니다.
+     ⚠ 넘기기는 **되돌릴 수 없습니다** — 그래서 엑셀 받기와 한 버튼으로 묶지 않았습니다. */
+  const noXl = list.filter(o => !o.xl);
   A.openSheet(`<b class="big">트라이코지로 넘기기</b>
     <p class="sum"><b>${list.length}</b> 건을 넘깁니다.</p>
     ${listHtml(list)}
-    <p class="ask">넘길까요?</p>`,
+    ${noXl.length ? `<p class="warn nox"><b>⚠ 엑셀을 아직 안 받으셨습니다</b> — ${noXl.length}건.<br>
+       넘기고 나면 이 화면에서 <b>③ 넘김</b> 으로 옮겨갑니다. 지금 받아두시는 걸 권합니다.</p>` : ""}
+    <p class="ask">넘기면 <b>되돌릴 수 없습니다.</b> 넘길까요?</p>`,
     () => {
       list.forEach(o => { o.status = 1; A.store?.onPatch(o, {status:1}); });   /* [저장소 고리] */
       S.SEL.clear();
       A.renderInbox(1); A.renderInbox(2); A.showSent(); A.renderMine();
+      A.notice?.(`✓ ${list.length}건을 트라이코지로 넘겼습니다 · ③ 넘김`);
     }, "ac", "넘기기");
 }
 

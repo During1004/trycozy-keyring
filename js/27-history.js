@@ -40,7 +40,7 @@ function hit(o){
   return bag.includes(F.q);
 }
 
-const ST = ["확인 대기", "확인 완료", "승인 완료", "출고 완료"];
+const ST = ["접수 대기", "접수 완료", "승인 완료", "출고 완료"];
 const sorted = () => A.ORDERS.slice().sort((a, b) => String(b.no).localeCompare(String(a.no)));
 
 /* ★ 조건칸은 한 번만 그립니다.

@@ -4,14 +4,14 @@
    (2026-08-24 사용자 지시)
 
    ★ 묶음은 **저장소에 남습니다** (`주문.묶음`).
-     화면용 토글이 아니라, 미확인 → 확인 → 발송 → 주문내역까지
+     화면용 토글이 아니라, 접수 전 → 넘길 것 → 넘김 → 주문내역까지
      합쳐진 채로 따라갑니다. 3개월 기록을 되짚을 때 그대로 보입니다.
 
    ★ 단계
-       ① 미확인  [⊕ 합치기] [✓ 확인]
-       ② 확인    [① 엑셀 다운로드] [② 트라이코지로 넘기기] [↩ 미확인으로]
+       ① 접수 전  [⊕ 합치기] [✓ 접수]
+       ② 넘길 것 [① 엑셀 다운로드] [② 트라이코지로 넘기기] [↩ 접수 전으로]
        ③ 발송    (손댈 것 없음)
-     `자료받음(dl)` = 확인했다 · `엑셀받음(xl)` = 엑셀을 받았다. 둘은 별개입니다.
+     `자료받음(dl)` = 접수했다 · `엑셀받음(xl)` = 엑셀을 받았다. 둘은 별개입니다.
    ────────────────────────────────────────────────────────── */
 import { S, esc, A } from "./00-core.js";
 
@@ -71,9 +71,9 @@ function mergedCard(list, role){
         <p class="meta">아래 표는 <b>상품별로 더한 수량</b>입니다 · 주문번호 ${nos.length}개는 그대로 살아 있습니다</p>
       </div>
       <span class="badges">
-        ${st === 0 ? `<span class="badge dl ${dl ? "yes" : "no"}">${dl ? "확인함" : "아직 미확인"}</span>` : ""}
+        ${st === 0 ? `<span class="badge dl ${dl ? "yes" : "no"}">${dl ? "접수함" : "접수 전"}</span>` : ""}
         ${st === 0 && dl && xl ? `<span class="badge xl">엑셀 받음</span>` : ""}
-        <span class="badge ${A.STATUS[st].cls}">${A.STATUS[st].label}</span>
+        ${st === 0 ? "" : `<span class="badge ${A.STATUS[st].cls}">${A.STATUS[st].label}</span>`}
         ${A.canPick(list[0], role) ? `<label class="selbox"><input type="checkbox" data-mgsel="${nos.join(",")}"${allSel ? " checked" : ""}></label>` : ""}
       </span>
     </div>
@@ -107,7 +107,7 @@ function mergedCard(list, role){
     <p class="xlnote">${lines.length} 품목 · 합계 <b>${total}</b> 개${
       split ? ` · <b class="hi">${split}종</b>이 여러 주문에 걸쳐 합쳐졌습니다` : ""} · 소비자가 ${A.money(m.cons)}</p>
     ${role === 1 && st === 0 && !dl ? `<div class="btns">
-      <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 확인<em>이 묶음 ${list.length}건을 확인 칸으로</em></button>
+      <button class="act s1 sm" data-mgconf="${nos.join(",")}" type="button">✓ 접수<em>이 묶음 ${list.length}건을 ② 넘길 것 으로</em></button>
       <button class="act mgc sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로 되돌립니다</em></button>
     </div>` : ""}
     ${role === 1 && st === 0 && dl ? `<div class="btns">
@@ -115,7 +115,7 @@ function mergedCard(list, role){
       <button class="act s2 sm" data-mgok="${nos.join(",")}" type="button">② 트라이코지로 넘기기<em>${list.length}건 한 번에</em></button>
     </div>
     <div class="btns">
-      <button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 미확인으로 되돌리기<em>주문 내용은 그대로입니다</em></button>
+      <button class="act ghost sm back" data-mgun="${nos.join(",")}" type="button">↩ 접수 전으로 되돌리기<em>주문 내용은 그대로입니다</em></button>
       <button class="act mgc sm line" data-mgun2="${nos.join(",")}" type="button">묶음 풀기<em>낱개 ${list.length}건으로</em></button>
     </div>` : ""}
   </article>`;
@@ -136,7 +136,7 @@ function askMerge(list){
     <p class="sum">매대 <b>${able.length}</b> 건을 <b>한 묶음</b>으로 만듭니다. 같은 상품은 수량이 더해져 보입니다.</p>
     ${A.listHtml(able)}
     <p class="ask">묶은 뒤에도 <b>주문번호는 그대로 살아 있고</b>, <b>묶음 풀기</b>로 언제든 되돌립니다.<br>
-       발송·주문내역에도 묶인 채로 남습니다. 합칠까요?</p>`,
+       ③ 넘김 · 주문내역에도 묶인 채로 남습니다. 합칠까요?</p>`,
     () => {
       able.forEach(o => { o.mg = name; A.store?.onPatch(o, { mg:name }); });   /* [저장소 고리] */
       S.SEL.clear(); redraw();
@@ -155,28 +155,31 @@ function askUnmerge(list){
       S.SEL.clear(); redraw();
     }, "", "묶음 풀기");
 }
-/* ✓ 확인 — 미확인 → 확인 */
+/* ✓ 접수 — ① 접수 전 → ② 넘길 것 */
 function askConfirm(list){
   const able = list.filter(o => o.status === 0 && !o.dl);
   if (!able.length) return;
-  A.openSheet(`<b class="big">✓ 확인</b>
-    <p class="sum"><b>${able.length}</b> 건을 <b>② 확인</b> 칸으로 보냅니다.</p>
+  A.openSheet(`<b class="big">✓ 접수</b>
+    <p class="sum"><b>${able.length}</b> 건을 <b>② 넘길 것</b> 으로 보냅니다.</p>
     ${A.listHtml(able)}
-    <p class="ask">확인 칸에서 <b>엑셀을 받고 트라이코지로 넘기게</b> 됩니다.<br>
-       잘못 눌러도 <b>↩ 미확인으로 되돌리기</b> 가 있습니다. 보낼까요?</p>`,
+    <p class="ask"><b>② 넘길 것</b> 에서 <b>엑셀을 받고 트라이코지로 넘기게</b> 됩니다.<br>
+       잘못 눌러도 <b>↩ 접수 전으로 되돌리기</b> 가 있습니다. 보낼까요?</p>`,
     () => {
       able.forEach(o => { o.dl = true; A.store?.onPatch(o, { dl:true }); });   /* [저장소 고리] */
       S.SEL.clear(); redraw();
-    }, "ac", `${able.length}건 확인`);
+      /* ★ 2026-08-31 — 화면은 옮기지 않습니다. 자료가 많을 때 카드로 스크롤해 버리면
+         위에서부터 훑던 자리를 잃습니다. 어디로 갔는지만 아래에 한 줄 띄웁니다. */
+      notice(`✓ ${able.length}건 접수 — ② 넘길 것 으로 옮겼습니다`);
+    }, "ac", `${able.length}건 접수`);
 }
-/* ↩ 미확인으로 되돌리기 — 확인·엑셀 표시만 지웁니다 */
+/* ↩ 접수 전으로 되돌리기 — 접수·엑셀 표시만 지웁니다 */
 function askUnconfirm(list){
   const able = list.filter(o => o.status === 0 && o.dl);
   if (!able.length) return;
-  A.openSheet(`<b class="big">↩ 미확인으로 되돌리기</b>
-    <p class="sum"><b>${able.length}</b> 건을 <b>① 미확인</b> 으로 내립니다.</p>
+  A.openSheet(`<b class="big">↩ 접수 전으로 되돌리기</b>
+    <p class="sum"><b>${able.length}</b> 건을 <b>① 접수 전</b> 으로 내립니다.</p>
     ${A.listHtml(able)}
-    <p class="ask">확인·엑셀 표시가 지워집니다. 다시 묶어서 처리하면 됩니다.<br>
+    <p class="ask">접수·엑셀 표시가 지워집니다. 다시 묶어서 처리하면 됩니다.<br>
        <b>주문 내용·수량·주문번호·묶음은 그대로입니다.</b> 되돌릴까요?</p>`,
     () => {
       able.forEach(o => { o.dl = false; o.xl = false; A.store?.onPatch(o, { dl:false, xl:false }); });   /* [저장소 고리] */
@@ -206,5 +209,25 @@ document.addEventListener("change", e => {
 });
 
 
+/* ══════════════════════════════════════════════════════════════
+   알림 한 줄 (2026-08-31) — 화면을 옮기지 않고 결과만 알립니다.
+   ⚠ 스크롤로 카드를 따라가게 하면 자료가 많을 때 보던 자리를 잃습니다.
+      그래서 아래쪽에 2.6초 떴다 사라지는 줄 하나만 씁니다.
+   ══════════════════════════════════════════════════════════════ */
+let noticeT = 0;
+function notice(msg){
+  let el = document.getElementById("notice");
+  if (!el){
+    el = document.createElement("div");
+    el.id = "notice"; el.className = "notice"; el.setAttribute("role", "status");
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.remove("on"); void el.offsetWidth;   /* 연달아 눌러도 처음부터 다시 */
+  el.classList.add("on");
+  clearTimeout(noticeT);
+  noticeT = setTimeout(() => el.classList.remove("on"), 2600);
+}
+
 /* ── 다른 파일이 쓰는 것 (A.이름 으로 부릅니다) ────────────── */
-Object.assign(A, { askConfirm, askMerge, askUnconfirm, askUnmerge, groupByMg, mergeLines, mergedCard });
+Object.assign(A, { askConfirm, askMerge, askUnconfirm, askUnmerge, groupByMg, mergeLines, mergedCard, notice });

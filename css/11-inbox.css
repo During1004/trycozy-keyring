@@ -332,3 +332,18 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 /* ↩ 되돌리기는 머리줄 작은 링크로 — 가끔 쓰는 수습 동작이라 큰 버튼에서 뺐습니다 */
 .bulkhead .lnk.undo{margin-left:auto;color:var(--accent-lo);font-weight:700;white-space:nowrap}
 .bulkhead .lnk.undo:hover{text-decoration:underline}
+
+/* 넘기기 확인창 — 엑셀 안 받았을 때 알림 (막지는 않습니다) */
+.sheet .warn.nox{background:#FFF6E8;border-left:4px solid #E8A33D;color:#6B4A12;
+  padding:10px 12px;border-radius:5px;margin:10px 0;font-size:12.5px;line-height:1.5}
+.sheet .warn.nox b{color:#8A5A00}
+
+/* 알림 한 줄 (2026-08-31) — 접수·넘기기 결과. 화면은 안 옮기고 여기만 뜹니다 */
+.notice{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translate(-50%,12px);z-index:80;max-width:min(92vw,520px);
+  padding:12px 18px;border-radius:999px;background:#12433A;color:#fff;
+  font-size:13.5px;font-weight:800;letter-spacing:-.01em;text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);opacity:0;pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease}
+.notice.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.notice{transition:none}}

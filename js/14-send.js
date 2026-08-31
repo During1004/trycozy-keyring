@@ -84,7 +84,7 @@ function showSent(){
     <div class="btns">
       <button class="act form sm" data-form="${o.no}" type="button">주문서 받기<em>필요할 때만</em></button>
       ${done
-        ? `<button class="act sm" type="button" disabled>되돌리기<em>더다움이 이미 확인함</em></button>`
+        ? `<button class="act sm" type="button" disabled>되돌리기<em>더다움이 이미 접수함</em></button>`
         : `<button class="act ghost sm" id="undoBtn" type="button">되돌리기<em>담았던 수량이 돌아옵니다</em></button>`}
     </div>`;
   if (!done) $("undoBtn").onclick = undoLast;
