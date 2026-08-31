@@ -157,7 +157,7 @@ function dlOrderForm(o, btn, mark){
   const ship = !!o.to, mmdd = o.mmdd;
   return A.run(btn, "받음 ✓", async () => {
     const stage = mark ? "2_더다움확인" : "1_전자랜드주문";       // mark 가 있으면 더다움이 받는 것
-    const who   = mark ? "더다움 확인용" : "전자랜드 주문서";
+    const who   = mark ? "더다움 접수용" : "전자랜드 주문서";   /* 2026-08-31 — 화면 용어(접수)와 맞춤. 파일 이름은 그대로 */
     const sheets = [{
       sheetName: "전자랜드",
       title: `${mmdd.slice(0,2)}/${mmdd.slice(2)} ${who} · ${o.mode} · ${orderNoFull(o)}`,
