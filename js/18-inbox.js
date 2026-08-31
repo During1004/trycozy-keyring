@@ -181,28 +181,28 @@ function orderCard(o, role){
       ${moneyRow(o, role)}
       <p class="xlnote">${o.lines.length} 품목 · 합계 ${o.lines.reduce((s,l)=>s+l.q,0)} 개${o.mode==="매대 보충" ? " · 소비자가 " + A.money(o.lines.reduce((s,l)=>s+(Number(String(l.p||"").replace(/[^0-9]/g,""))||0)*l.q,0)) : ""}</p>
       ${role===1 && o.status===0 && !o.dl ? `<div class="btns">
-        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 접수<em>② 넘길 것 으로 보냅니다</em></button>
+        <button class="act s1 sm" data-conf="${o.no}" type="button">✓ 접수</button>
       </div>` : ""}
       ${role===1 && o.status===0 && o.dl ? `<div class="btns">
-        <button class="act xlc sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${o.mode} 양식${o.xl ? " · 받았습니다" : ""}</em></button>
-        <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기<em>넘기면 ③ 넘김 으로 갑니다</em></button>
+        <button class="act xlc sm${o.xl ? " line" : ""}" data-form="${o.no}" data-mark="1">${o.xl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}</button>
+        <button class="act s2 sm" data-ok="${o.no}" type="button">② 트라이코지로 넘기기</button>
       </div>
-      <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 접수 전으로 되돌리기<em>다시 정리하려면 · 주문 내용은 그대로입니다</em></button>` : ""}
+      <button class="act ghost sm back" data-unconf="${o.no}" type="button">↩ 접수 전으로 되돌리기</button>` : ""}
       ${role===1 && o.status>=1 ? `<button class="act ghost" type="button" disabled>${
         o.status===1 ? "트라이코지 승인 대기" : o.status===2 ? "트라이코지 승인 완료 · 출고 전" : "출고 완료"
       }</button>` : ""}
       ${role===2 && o.status===1 ? `<div class="btns">
-        <button class="act sm" data-appr="${o.no}" type="button">최종 승인<em>되돌릴 수 없습니다</em></button>
-        <button class="act ghost sm" data-rej="${o.no}" type="button">더다움에 반려<em>사유를 적어 되돌립니다</em></button>
+        <button class="act sm" data-appr="${o.no}" type="button">최종 승인</button>
+        <button class="act ghost sm" data-rej="${o.no}" type="button">더다움에 반려</button>
       </div>` : ""}
       ${role===2 && o.status>=2 ? A.apprBtns(o.no, [o]) : ""}
       ${role===2 && o.status===2 ? `<button class="act shipout" data-done="${o.no}" type="button">출고 완료로 표시</button>` : ""}
       ${o.ship ? `<div class="trk"><span class="eyebrow">송장</span>${o.ship.no ? `<b>${esc([o.ship.co, o.ship.no].filter(Boolean).join(" "))}</b>` : `<b>${esc(o.ship.co || "")}</b> <i>번호 없음</i>`}${o.ship.img ? `<img src="${o.ship.img}" alt="송장 이미지">` : ""}</div>` : ""}
       ${role===0 ? `<div class="btns">
-        <button class="act form sm" data-form="${o.no}" type="button">주문서 받기<em>더다움 자료와 동일</em></button>
+        <button class="act form sm" data-form="${o.no}" type="button">주문서 받기</button>
         ${o.status===0
-          ? `<button class="act ghost sm" data-undo="${o.no}" type="button">되돌리기<em>담았던 수량이 돌아옵니다</em></button>`
-          : `<button class="act ghost sm" type="button" disabled>되돌리기<em>${STATUS[o.status].label} — 못 되돌립니다</em></button>`}
+          ? `<button class="act ghost sm" data-undo="${o.no}" type="button">되돌리기</button>`
+          : `<button class="act ghost sm" type="button" disabled>되돌리기 · ${STATUS[o.status].label}</button>`}
       </div>` : ""}
     </article>`;
 }

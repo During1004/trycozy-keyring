@@ -120,7 +120,7 @@ function bulkBar(role, list){
   const files = l => { const d = l.filter(o=>!o.to).length, c = l.filter(o=>o.to).length;
                        return d && c ? "파일 2개 (매대 · 고객)" : c ? "고객 파일 1개" : "매대 파일 1개"; };
   if (role === 0){
-    btns = `<button class="act form sm" id="${ID("bkMineDl",role)}" type="button">주문서 합본 받기<em>${cnt(able, 1)} · ${files(pick(able))}</em></button>`;
+    btns = `<button class="act form sm" id="${ID("bkMineDl",role)}" type="button">주문서 합본 받기 ${able.length}건</button>`;
   }
   if (role === 1){
     /* ★ 2026-08-24 — 더다움은 위쪽 통합 막대를 쓰지 않습니다.
@@ -132,8 +132,8 @@ function bulkBar(role, list){
     const wait = able.filter(o => o.status === 1);
     const appr = able.filter(o => o.status === 2);
     btns =
-      `<button class="act sm" id="${ID("bkAppr",role)}" type="button"${pick(wait).length ? "" : " disabled"}>최종 승인<em>${wait.length ? cnt(wait, 1) : "승인 대기 없음"}</em></button>
-       <button class="act ghost sm" id="${ID("bkShip",role)}" type="button"${pick(appr).length ? "" : " disabled"}>출고 완료<em>${appr.length ? cnt(appr, 1) : "승인된 건 없음"}</em></button>`;
+      `<button class="act sm" id="${ID("bkAppr",role)}" type="button"${pick(wait).length ? "" : " disabled"}>${wait.length ? `최종 승인 ${wait.length}건` : "최종 승인 · 대기 없음"}</button>
+       <button class="act ghost sm" id="${ID("bkShip",role)}" type="button"${pick(appr).length ? "" : " disabled"}>${appr.length ? `출고 완료 ${appr.length}건` : "출고 완료 · 승인된 건 없음"}</button>`;
   }
   return `<div class="bulkbox">${head}<div class="btns bulkbtns">${btns}</div></div>`;
 }
@@ -160,16 +160,15 @@ function stageBar(role, g, key){
   let btns = "";
   if (key === "un"){
     const mgAble = sel.filter(o => !o.to);
-    btns = `<button class="act mgc sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>⊕ 합치기<em>${
-        mgAble.length >= 2 ? mgAble.length + "건을 한 묶음으로" : "매대 2건 이상 골라 주세요"}</em></button>
-      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ 접수<em>${sel.length}건을 ② 넘길 것 으로</em></button>`;
+    btns = `<button class="act mgc sm" id="${ID("bkMerge",role,key)}" type="button"${mgAble.length >= 2 ? "" : " disabled"}>${mgAble.length >= 2 ? `⊕ ${mgAble.length}건 합치기` : "⊕ 합치기 · 매대 2건 이상"}</button>
+      <button class="act s1 sm" id="${ID("bkConf",role,key)}" type="button">✓ ${sel.length}건 접수</button>`;
   } else {
     const allXl = sel.every(o => o.xl);
     /* ↩ 미확인으로 는 **가끔 쓰는 수습 동작**이라 큰 버튼에서 뺐습니다 (2026-08-24 사용자 지시).
        한 번 잘못 누르면 여러 건이 통째로 되돌아가서 위험합니다. 머리줄 작은 링크로 내렸습니다. */
     btns = `<button class="act xlc sm${allXl ? " line" : ""}" id="${ID("bkDl",role,key)}" type="button">${
-        allXl ? "✓ 엑셀 다시 받기" : "① 엑셀 다운로드"}<em>${sel.length}건 · ${files(sel)}${allXl ? " · 받았습니다" : ""}</em></button>
-      <button class="act s2 sm" id="${ID("bkOk",role,key)}" type="button">② 트라이코지로 넘기기<em>${sel.length}건 넘김</em></button>`;
+        allXl ? `✓ ${sel.length}건 엑셀 다시 받기` : `① ${sel.length}건 엑셀 다운로드`}</button>
+      <button class="act s2 sm" id="${ID("bkOk",role,key)}" type="button">② ${sel.length}건 트라이코지로 넘기기</button>`;
   }
   return `<div class="bulkbox ${STAGE[key].tone}">
       <div class="bulkhead">

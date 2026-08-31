@@ -55,8 +55,8 @@ const apprBtns = (v, list) => {
   const st = list.filter(o=>!o.to).length, cu = list.filter(o=>o.to).length;
   if (!st && !cu) return "";
   return `<div class="btns">
-    ${st ? `<button class="act sm store" data-store="${v}" type="button">매장건 · XLSX<em>${st}건 · 파일 1개 · 생산팀</em></button>` : ""}
-    ${cu ? `<button class="act sm cust" data-cust="${v}" type="button">고객건 · XLSX<em>${cu}건 · 파일 1개 · 받는 분 포함</em></button>` : ""}
+    ${st ? `<button class="act sm store" data-store="${v}" type="button">매장건 ${st}건 · XLSX</button>` : ""}
+    ${cu ? `<button class="act sm cust" data-cust="${v}" type="button">고객건 ${cu}건 · XLSX</button>` : ""}
   </div>`;
 };
 

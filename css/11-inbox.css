@@ -31,13 +31,15 @@
 .order h3{margin:0;font-size:14px;font-weight:700}
 .order .meta{font-size:12px;color:var(--muted);margin:2px 0 0}
 .order .ship-to{font-size:12px;margin:8px 0 0;padding:9px 10px;background:#fff;border-radius:4px;border-left:3px solid var(--cyan)}
-.act{width:100%;margin-top:12px;border:0;border-radius:5px;padding:12px;background:var(--ink);color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 0 #000}
+.act{width:100%;margin-top:12px;border:0;border-radius:5px;padding:12px;background:var(--ink);color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 3px 0 #000}
 .act:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
 .btns{display:flex;gap:8px;margin-top:12px}
 .btns .act{margin-top:0}
 .act.store{background:var(--accent);box-shadow:0 3px 0 var(--accent-lo)}
 .act.cust{background:var(--cyan);box-shadow:0 3px 0 var(--cyan-lo)}
-.act.sm{font-size:12.5px;padding:11px 8px;line-height:1.35}
+/* ★ 2026-08-31 — 한 줄 · 글씨 키움. 부제(<em>)는 대부분 제목으로 합쳤습니다.
+   12.5px 제목 + 10px 반투명 부제는 너무 작아 안 읽힌다는 지적. 건수는 제목에 남깁니다. */
+.act.sm{font-size:15px;padding:15px 10px;line-height:1.3}
 .act.sm em{display:block;font-style:normal;font-weight:500;font-size:10px;opacity:.82;margin-top:2px}
 .act.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:0 2px 0 var(--line);font-weight:700}
 .act.ghost em{color:var(--muted)}

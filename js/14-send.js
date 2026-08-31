@@ -82,10 +82,10 @@ function showSent(){
   bar.innerHTML = `
     <p class="ttl"><b>${o.no}</b> · ${o.mode} · ${o.lines.length}품목 ${n}개 보냈습니다</p>
     <div class="btns">
-      <button class="act form sm" data-form="${o.no}" type="button">주문서 받기<em>필요할 때만</em></button>
+      <button class="act form sm" data-form="${o.no}" type="button">주문서 받기</button>
       ${done
-        ? `<button class="act sm" type="button" disabled>되돌리기<em>더다움이 이미 접수함</em></button>`
-        : `<button class="act ghost sm" id="undoBtn" type="button">되돌리기<em>담았던 수량이 돌아옵니다</em></button>`}
+        ? `<button class="act sm" type="button" disabled>되돌리기 · 더다움이 접수함</button>`
+        : `<button class="act ghost sm" id="undoBtn" type="button">되돌리기</button>`}
     </div>`;
   if (!done) $("undoBtn").onclick = undoLast;
 }
