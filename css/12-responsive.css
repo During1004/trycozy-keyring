@@ -83,7 +83,10 @@
   body{padding-bottom:24px}
   .wrap{max-width:1440px;padding:0 8px}
   #v0{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0 26px;align-items:start;
-      grid-template-areas:"main side";}
+      grid-template-areas:"sent side" "main side";}
+  /* ★ 2026-09-21 — "보냈습니다" 줄에 자리를 줍니다. 자리가 없으면 오른쪽 패널 높이만큼 아래 줄로 밀려나
+     상품 57종일 때 4351px 아래(화면 5장 아래)에 떠서, 보낸 직후 안내가 안 보였습니다. 폰은 세로 쌓기라 무관. */
+  .sentbar{grid-area:sent}
   .col-main{grid-area:main;min-width:0}
   .col-side{grid-area:side;position:sticky;top:104px;max-height:calc(100vh - 120px);
             overflow-y:auto;padding-bottom:16px;scrollbar-width:thin}
